@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/HealthyAus/obj
+/HealthyAus/bin
+/HealthyAus/.vs
+/HealthyAus/HealthyAus.csproj.user

@@ -1,0 +1,818 @@
+﻿@{
+    ViewData["Title"] = "Test Services/Free Condoms";
+}
+@model List<HealthyAus.Models.ClinicContainer>;
+
+<link rel="stylesheet" href="~/css/TestServicesFreeCondoms.css" asp-append-version="true" />
+
+<!--Mapbox map-->
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css' rel='stylesheet' />
+
+<!--Mapbox geocoder plugin-->
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
+
+<!-- Turf.js plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/6.5.0/turf.min.js" integrity="sha512-Q7HOppxoH0L2M7hreVoFCtUZimR2YaY0fBewIYzkCgmNtgOOZ5IgMNYxHgfps0qrO1ef5m7L1FeHrhXlq1I9HA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+@functions {
+    // Convert location data into list of json strings
+    List<String> getLocationData()
+    {
+        var result = new List<String>();
+        foreach (var item in Model)
+        {
+            result.Add(Newtonsoft.Json.JsonConvert.SerializeObject(item));
+        }
+        return result;
+    }
+}
+
+<div class="top-banner w-100 d-flex justify-content-center">
+    <div class="container-fluid px-sm-5 px-3">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10 col-md-10">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 px-0 text-center">
+                        <img class="banner-img img-fluid" src="~/img/map.svg" alt="Test Services/Free condoms banner image"/>
+                    </div>
+                    <div class="col-lg-6 pb-5">
+                        <h1 class="heading-title">Test Services/Free condoms</h1>
+                        <h5 class="heading-text">Find available test services and free condoms near your location</h5>
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid main-body py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-11">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Test Services/Free Condoms</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-2">
+        <div class="col-12 col-lg-11">
+            <div class="d-none row mb-3" id="search-bar">
+                <!--Search bar-->
+                <h5 class="section-title pb-2">Search for test services/free condoms in Melbourne</h5>
+                <div class="col-12 col-md-5 col-lg-4 col-xxl-4" id="search-col">
+                    <div id="geocoder" class="geocoder"></div>
+                </div>
+                <!--Filter buttons-->
+                <div class="col-12 mt-2">
+                    <button type="button" class="btn btn-primary active service-filter clicked mb-sm-0 mb-1" onclick="toggleStateFreeTesting()" id="free-testing" data-bs-toggle="button" autocomplete="off" aria-pressed="true">
+                        <i class="fa-solid fa-check check-icon" id="free-testing-selected"></i>
+                        Free Testing
+                        <img class="filter-logo active" id="free-testing-logo" src="/img/free.svg" />
+                    </button>
+                    <a href="#" class="fa-solid fa-circle-info filter-tool-tip" data-bs-toggle="tooltip" data-bs-placement="top" title="No out of pocket money, some places may require medicare"></a>
+                    <button type="button" class="btn btn-primary active service-filter clicked mb-sm-0 mb-1" onclick="toggleStateAnonymous()" id="anonymous-testing" data-bs-toggle="button" autocomplete="off" aria-pressed="true">
+                        <i class="fa-solid fa-check check-icon" id="anonymous-testing-selected"></i>
+                        Anonymous Testing
+                        <img class="filter-logo active" id="anonymous-testing-logo" src="/img/questionmark.svg"/>
+                    </button>
+                    <a href="#" class="fa-solid fa-circle-info filter-tool-tip" data-bs-toggle="tooltip" data-bs-placement="top" title="General practitioner (GP) referral is not required"></a>
+                    <button type="button" class="btn btn-primary active service-filter clicked mb-sm-0 mb-1" onclick="toggleStateFreeCondom()" id="free-condom" data-bs-toggle="button" autocomplete="off" aria-pressed="true">
+                        <i class="fa-solid fa-check check-icon" id="free-condom-selected"></i>
+                        Free Condom
+                        <img class="filter-logo active" id="free-condom-logo" src="/img/condom.svg"/>
+                    </button>
+                </div>
+            </div>
+            <div class="row" id="map-location">
+                <!--Location list-->
+                <div class="col-12 col-md-5 col-lg-4 col-xxl-4 mt-md-0 mt-3" id="location-list-col">
+                    <div class="d-none card location-list" id="location-list">
+                        <div class="card-body pe-1">
+                            <h5 class="card-title location-list-title text-center pb-4">Locations</h5>
+                            <div class="container-fluid" id="location-list-container">
+                                <p class="location-list-message text-center"><i class="fa-solid fa-magnifying-glass me-2"></i>Search a suburb using the search bar</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Loading spinner-->
+                    <div class="row align-items-center" id="loading-section">
+                        <div class="row">
+                            <div class="col text-center">
+                                <i class="fa-solid fa-location-dot fa-bounce" id="loading-icon"></i>
+                                <p class="loading-text ms-2 mb-0">Loading map data...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Map-->
+                <div class="col-md-7 col-lg-8 col-xxl-8 px-sm-1 px-3" id="map-col">
+                    <div id='map'></div>
+                    <div class="row justify-content-center align-items-center">
+                        <div class="col-12 mt-1">
+                            <p class="data-source">
+                                Incorporates or developed using Administrative Boundaries © <a class="source-link" target="_blank" rel="noopener noreferrer" href="https://geoscape.com.au/legal/data-copyright-and-disclaimer/">Geoscape Australia</a>
+                                licensed by the <a class="source-link" target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International licence (CC BY 4.0)</a>
+                            </p>
+                        </div>
+                        <p class="mb-0 foot-note"><strong>Free</strong> - No out of pocket money, some places may require medicare.</p>
+                        <p class="mb-0 foot-note"><strong>Anonymous</strong> - General practitioner (GP) referral is not required.</p>
+                    </div>
+                </div>
+            </div>
+            <p class="attribution mt-5 mb-0">Icon attributions</p>
+            <p class="mb-0 attribution-text">
+                "<a class="attribution-link" href="https://fontawesome.com/icons/location-dot?s=solid&f=classic">location-dot</a>" 
+                by <a class="attribution-link" href="https://fontawesome.com/">Font Awesome</a> 
+                is licensed under <a class="attribution-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+            </p>
+            <p class="mb-0 attribution-text">
+                "<a class="attribution-link" href="https://fontawesome.com/icons/diamond-turn-right?s=solid&f=classic">diamond-turn-right</a>"
+                by <a class="attribution-link" href="https://fontawesome.com/">Font Awesome</a>
+                is licensed under <a class="attribution-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+            </p>
+            <p class="mb-0 attribution-text">
+                "<a class="attribution-link" href="https://fontawesome.com/icons/check?s=solid&f=classic">check</a>"
+                by <a class="attribution-link" href="https://fontawesome.com/">Font Awesome</a>
+                is licensed under <a class="attribution-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+            </p>
+            <p class="mb-0 attribution-text">
+                "<a class="attribution-link" href="https://fontawesome.com/icons/magnifying-glass?s=solid&f=classic">magnifying-glass</a>"
+                by <a class="attribution-link" href="https://fontawesome.com/">Font Awesome</a>
+                is licensed under <a class="attribution-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+            </p>
+            <p class="mb-0 attribution-text">
+                "<a class="attribution-link" href="https://fontawesome.com/icons/circle-exclamation?s=solid&f=classic">circle-exclamation</a>"
+                by <a class="attribution-link" href="https://fontawesome.com/">Font Awesome</a>
+                is licensed under <a class="attribution-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+            </p>
+            <p class="mb-0 attribution-text">
+                "<a class="attribution-link" href="https://fontawesome.com/icons/circle-info?s=solid&f=classic">circle-info</a>"
+                by <a class="attribution-link" href="https://fontawesome.com/">Font Awesome</a>
+                is licensed under <a class="attribution-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        // Generate filter tooltip
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+
+        // Prevent scrolling when tooltip is clicked
+        $(".filter-tool-tip").click(function(e) {
+            e.preventDefault();
+        });
+
+        // Map
+        mapboxgl.accessToken = 'pk.eyJ1IjoienRlbzAwMDYiLCJhIjoiY2w3dzFiN2RmMGR5MzNvcWtwdWI5bjA3NCJ9.DKR0H7Hmk3d9zEZsAkXSqw';
+        const map = new mapboxgl.Map({
+            container: 'map', // container ID
+            style: 'mapbox://styles/mapbox/streets-v11', // style URL
+            center: [144.94, -37.84], // starting position [lng, lat]
+            zoom: 9, // starting zoom
+            projection: 'globe' // display the map as a 3D globe
+        });
+
+        // Add controls: zoom in, zoom out, compass
+        map.addControl(new mapboxgl.NavigationControl());
+
+        // Map search function
+        const geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            placeholder: 'Search for a suburb',
+            // Limit seach results to Australia.
+            countries: 'au',
+            // Bounding box, limit search result to melbourne
+            bbox: [144.593741856, -38.433859306, 145.512528832, -37.511273722],
+            // Search using suburb
+            types: 'locality',
+            // Apply a client-side filter to further limit results to those strictly within the Melbourne region.
+            filter: function(item) {
+                return item.context.some((i) => {
+                    return (
+                        (i.id.split('.').shift() === 'place' &&
+                            i.text === 'Melbourne')
+                    );
+                });
+            },
+            mapboxgl: mapboxgl
+        });
+        document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+
+        // Convert list of json strings to list of json objects
+        let resultList = @Html.Raw(Json.Serialize(getLocationData()));
+
+        // Convert the data to proper geojson format
+        const geojson = {type: 'FeatureCollection', features: []};
+        resultList.forEach(convertGeoJson);
+
+        // Function that converts data into proper geojson format
+        function convertGeoJson(string) {
+            let location = JSON.parse(string);
+            geojson.features.push({
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: location.coordinates
+                },
+                properties: {
+                    title: location.name,
+                    address: location.address,
+                    services: location.services
+                }
+            });
+        }
+
+        // Assign a unique ID to each location
+        geojson.features.forEach(function(location, i) {
+            location.properties.id = i;
+        });
+
+        // Move the map to the selected location
+        function flyToLocation(currentFeature) {
+            map.flyTo({
+                center: currentFeature.geometry.coordinates,
+                zoom: 15
+            });
+        }
+
+        // Set the content of location popup
+        function setPopupHtml(feature) {
+            let htmlContent = `<p class="popup-title mt-2">${feature.properties.title}</p><p class="popup-desc mb-2">${feature.properties.address}</p>`;
+            htmlContent += `<div class='row'>`;
+            htmlContent += `<div class='col-7'>`;
+            if (feature.properties.services.includes('free_testing')) {
+                htmlContent += `<p class="service-text"><img class="service-logo" src="/img/free.svg"/>Free Testing</p>`;
+            }
+            if (feature.properties.services.includes('anonymous_testing')) {
+                htmlContent += `<p class="service-text"><img class="service-logo" src="/img/questionmark.svg"/>Anonymous Testing</p>`;
+            }
+            if (feature.properties.services.includes('free_condom')) {
+                htmlContent += `<p class="service-text"><img class="service-logo" src="/img/condom.svg"/>Free Condom</p>`;
+            }
+            htmlContent += `</div>`;
+            htmlContent += `<div class="col-5 text-center">`
+            htmlContent += `<a  class="location-link" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query= ${feature.properties.title}">
+                                <i class="fa-solid fa-diamond-turn-right direction-button"></i>
+                                <p class="direction-text">Directions</p>
+                            </a>`;
+            // If the distance exist
+            if (feature.properties.distance) {
+                const roundedDistance = Math.round(feature.properties.distance * 100) / 100;
+                htmlContent += `<p class="distance-display pt-2 pe-2">${roundedDistance} KM Away</p>`;
+            };
+            htmlContent += `</div>`
+            htmlContent += `</div>`;
+            return htmlContent;
+        }
+
+        // Create popup when location is selected
+        function createPopUp(currentFeature) {
+            const popUps = document.getElementsByClassName('mapboxgl-popup');
+            /** Check if there is already a popup on the map and if so, remove it */
+            if (popUps[0]) popUps[0].remove();
+            const popup = new mapboxgl.Popup({ offset: 25 })
+                .setLngLat(currentFeature.geometry.coordinates)
+                .setHTML(setPopupHtml(currentFeature))
+                .addTo(map);
+        }
+
+        // Add markers to map
+        function createMarkers() {
+            for (const feature of geojson.features) {
+                // create a HTML element for each feature
+                const el = document.createElement('div');
+                el.className = 'marker';
+                // make a marker for each feature and add to the map
+                new mapboxgl.Marker(el)
+                    .setLngLat(feature.geometry.coordinates)
+                    .setPopup(
+                        // add popups
+                        new mapboxgl.Popup({ offset: 25 })
+                            .setHTML(
+                                setPopupHtml(feature)
+                            )
+                    )
+                    .addTo(map);
+
+                // Highlight the selected location in the location list if the marker is clicked
+                el.addEventListener('click', function(e) {
+                    // Remove currently highlighted location
+                    const activeItem = document.getElementsByClassName('item active');
+                    if (activeItem[0]) {
+                        activeItem[0].classList.remove('active');
+                    }
+
+                    // Highlight the selected location
+                    const locationItem = document.getElementById(`listing-${feature.properties.id}`);
+                    if (locationItem){
+                        locationItem.classList.add('active');
+                    }
+                });
+            }
+        }
+
+        // set the content of the location listings
+        function setLocationListingHTML(location) {
+            let htmlContent = `<p class="location-name">${location.properties.title}</p>`;
+            htmlContent += `<p class="location-address pb-2">${location.properties.address}</p>`;
+            htmlContent += `<div class="row">`;
+            htmlContent += `<div class="col">`;
+            if (location.properties.services.includes('free_testing')) {
+                htmlContent += `<p class="service-text pb-1"><img class="service-logo" src="/img/free.svg"/>Free Testing</p>`;
+            }
+            if (location.properties.services.includes('anonymous_testing')) {
+                htmlContent += `<p class="service-text pb-1"><img class="service-logo" src="/img/questionmark.svg"/>Anonymous Testing</p>`;
+            }
+            if (location.properties.services.includes('free_condom')) {
+                htmlContent += `<p class="service-text pb-1"><img class="service-logo" src="/img/condom.svg"/>Free Condom</p>`;
+            }
+            htmlContent += `</div>`;
+            htmlContent += `</div>`;
+            return htmlContent;
+        }
+
+        // Build location list
+        function buildLocationList(locations) {
+            for (const location of locations.features) {
+                // Populate the location list
+                const listings = document.getElementById(`location-list-container`);
+                // Create listing that contains the location
+                const listing_row = listings.appendChild(document.createElement('div'));
+                // Assign a unique `id` to the location listings
+                listing_row.id = `listing-${location.properties.id}`;
+                // Assign class names to the listing row
+                listing_row.className = 'row border-bottom pb-3 mt-3 item';
+                // Create first column to holds the content of the location
+                const listing_col1 = listing_row.appendChild(document.createElement('div'));
+                listing_col1.className = 'col-9 px-0';
+                /* Add the link to the individual listing created above. */
+                const link = listing_col1.appendChild(document.createElement('a'));
+                link.href = '#map-col';
+                link.className = 'title';
+                link.id = `link-${location.properties.id}`;
+                link.innerHTML = setLocationListingHTML(location);
+                // Create second column that holds the content of the location
+                const listing_col2 = listing_row.appendChild(document.createElement('div'));
+                listing_col2.className = 'col-3 text-center px-0 pt-3';
+                const direction_link = listing_col2.appendChild(document.createElement('a'));
+                direction_link.innerHTML =
+                    `<a  class="location-link" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query= ${location.properties.title}">
+                                    <i class="fa-solid fa-diamond-turn-right direction-button"></i>
+                                    <p class="direction-text">Directions</p>
+                                </a>`;
+
+                // Display distance from the searched suburb
+                if (location.properties.distance) {     // If the distance exist
+                    const roundedDistance = Math.round(location.properties.distance * 100) / 100;
+                    const distanceDisplay = listing_col2.appendChild(document.createElement('div'));
+                    distanceDisplay.innerHTML += `<p class="distance-display pt-2 pe-2">${roundedDistance} KM Away</p>`;
+                };
+
+                // When link is clicked in the location list
+                link.addEventListener('click', function(e) {
+                    e.stopImmediatePropagation();
+                    for (const feature of geojson.features) {
+                        if (this.id === `link-${feature.properties.id}`) {
+                            flyToLocation(feature);
+                            createPopUp(feature);
+                        }
+                    }
+                    const activeItem = document.getElementsByClassName('item active');
+                    if (activeItem[0]) {
+                        activeItem[0].classList.remove('active');
+                    }
+                    this.parentNode.parentNode.classList.add('active');
+                }, true);
+            }
+        }
+
+        // Filters the location that does not contain the service filters selected
+        function filterLocationServices(locations){
+            let freeTestingStatus = document.getElementById('free-testing').classList.contains('active');
+            let anonymousTestingStatus = document.getElementById('anonymous-testing').classList.contains('active');
+            let freeCondom = document.getElementById('free-condom').classList.contains('active');
+
+            let filteredLocations = locations.filter(function (feature) {
+                let returnStatus = false;
+                // If free testing service is selected
+                if (freeTestingStatus) {
+                    if (feature.properties.services.includes('free_testing')) {
+                        returnStatus = true;
+                    }
+                }
+
+                // If anonymous testing service is selected
+                if (anonymousTestingStatus) {
+                    if (feature.properties.services.includes('anonymous_testing')) {
+                        returnStatus = true;
+                    }
+                }
+
+                // If free condom service is selected
+                if (freeCondom) {
+                    if (feature.properties.services.includes('free_condom')) {
+                        returnStatus = true;
+                    }
+                }
+                return returnStatus;
+            });
+            return filteredLocations;
+        }
+
+        // Get json victoria feature data from url
+        function getVictoriaFeatures() {
+            return $.getJSON('https://data.gov.au/geoserver/vic-suburb-locality-boundaries-psma-administrative-boundaries/wfs?request=GetFeature&typeName=ckan_af33dd8c_0534_4e18_9245_fc64440f742e&outputFormat=json').then(function (returnedData) {
+                return {
+                    victoriaFeatures: returnedData
+                }
+            });
+        }
+
+        // Global variable that stores the test centres/free condom locations within the search suburb;
+        let locationsWithinSuburb;
+
+        // Once the map is completely loaded 
+        map.on('load', () => {
+            // Get victoria feature data
+            getVictoriaFeatures().then(function(returnedData){
+                let victoriaFeatures = returnedData.victoriaFeatures;
+                map.addSource('victoria', {
+                    'type': 'geojson',
+                    'data': victoriaFeatures
+                });
+            });
+
+            // Check if the data is fully loaded
+            let loaded = false;
+            map.on("sourcedata", function (e) {
+                // Execute only once
+                if (!loaded) {
+                    // If  data is fully loaded
+                    if (map.getSource('victoria') && map.isSourceLoaded('victoria')) {
+                        loaded = true;
+                        // Hide the loading section
+                        let loading = document.getElementById('loading-section');
+                        loading.classList.add('d-none');
+
+                        // Make the location list and search bar section appear
+                        document.getElementById('location-list').classList.remove('d-none');
+                        document.getElementById('search-bar').classList.remove('d-none');
+                    }
+                }
+            });
+
+            // Create Markers on map
+            createMarkers();
+
+            // Event when the suburb is searched
+            geocoder.on('result', (event) => {
+                const searchResult = event.result.geometry;
+                let suburbName;
+
+                // Get the suburb name
+                suburbName = event.result.text.toUpperCase();
+
+                // Remove previous suburb highlight
+                if (map.getLayer('suburb')) {
+                    map.removeLayer('suburb');
+                    map.removeSource('suburb');
+                };
+
+                // Add Suburb highlight
+                map.addLayer({
+                    'id': 'suburb',
+                    'type': 'fill',
+                    source: {
+                        type: 'geojson',
+                        data: { "type": "FeatureCollection", "features": [] }
+                    },
+                    'layout': {},
+                    'paint': {
+                        'fill-color': '#627BC1',
+                        'fill-opacity': 0.5
+                    }
+                });
+
+                // Get the loaded victoria suburb boundary coordinates
+                let features = map.getSource('victoria')._data.features;
+
+                const options = { units: 'kilometers' };
+
+                // Calculate the distance of the location from the suburb searched
+                for (const location of geojson.features) {
+                    location.properties.distance = turf.distance(
+                        searchResult,
+                        location.geometry,
+                        options
+                    );
+                }
+
+                // Sorting the locations by distance
+                geojson.features.sort((a, b) => {
+                    if (a.properties.distance > b.properties.distance) {
+                        return 1;
+                    }
+                    if (a.properties.distance < b.properties.distance) {
+                        return -1;
+                    }
+                    return 0; // a must be equal to b
+                });
+                            
+                // Get the boundary coordinates of the searched suburb
+                let suburb = features.filter(function (item, index) {
+                    return item.properties.vic_loca_2.toUpperCase() == suburbName;
+                });
+
+                // Set the searched suburb boundary coordinates
+                map.getSource('suburb').setData(suburb[0]);
+
+                // Get the locations/centres that are within the searched suburb
+                locationsWithinSuburb = geojson.features.filter(function (feature) {
+                    return turf.booleanPointInPolygon(feature, suburb[0]);
+                });
+
+                // Filter out the locations that do not have the selected services
+                let filteredLocationsWithinSuburb = filterLocationServices(locationsWithinSuburb);
+
+                // Remove the current location list
+                const listings = document.getElementById('location-list-container');
+                while (listings.firstChild) {
+                    listings.removeChild(listings.firstChild);
+                }
+
+                // Getting the location list data
+                let locationsCollection;
+                if (filteredLocationsWithinSuburb.length != 0) {                        // If there are locations within the suburb, provide the locations within the suburb
+                    locationsCollection = { features: filteredLocationsWithinSuburb };
+
+                    // Remove alert
+                    let alertNotification = document.getElementById("alert");
+                    if (alertNotification){
+                        alertNotification.remove();
+                    }
+                } else {                                                                // Else provide Top 10 nearest recommendations
+                    let nearestLocations = filterLocationServices(geojson.features);    // Get the list of locations with the selected services
+                    locationsCollection = { features: nearestLocations.slice(0, 10)};    // Get top 10 nearest
+
+                    // Remove previous alert
+                    let alertNotification = document.getElementById("alert");
+                    if (alertNotification){
+                        alertNotification.remove();
+                    }
+
+                    // Add alert
+                    let freeTestingStatus = document.getElementById('free-testing').classList.contains('active');
+                    let anonymousTestingStatus = document.getElementById('anonymous-testing').classList.contains('active');
+                    let freeCondom = document.getElementById('free-condom').classList.contains('active');
+                    let servicesMsg = "";
+                    if (freeTestingStatus){                 // If free testing filter is active
+                        servicesMsg += 'Free testing';
+                    }
+                    if (anonymousTestingStatus){            // If anonymouse testing filter is active
+                        if (servicesMsg != ""){
+                            servicesMsg += "/";
+                        }
+                        servicesMsg += 'Anonymous testing';
+                    }
+                    if (freeCondom) {                       // If free condom filter is active
+                        if (servicesMsg != "") {
+                            servicesMsg += "/";
+                        }
+                        servicesMsg += 'Free condoms';
+                    }
+
+                    // If there are at least one active filters display the alert message
+                    if (servicesMsg !== ""){
+                        let mapCol = document.getElementById('map-col');
+                        let alert = document.createElement('div');
+                        alert.className = "alert alert-danger alert-dismissible fade show";
+                        alert.role = "alert";
+                        alert.id = "alert";
+                        alert.innerHTML = ` <i class="fa-solid fa-circle-exclamation alert-icon"></i>
+                                                    <span>No ${servicesMsg} in this suburb. Here are some of the nearest locations from this suburb!</span>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                        mapCol.insertBefore(alert, mapCol.firstChild);
+                    }
+                }
+
+                // Rebuild location list
+                buildLocationList(locationsCollection);
+
+                // Update markers
+                geojson.features.forEach(function (location) {
+                    createPopUp(location);
+                });
+
+                // Highlight the closest location
+                const activeListing = document.getElementById(
+                    `listing-${geojson.features[0].properties.id}`
+                );
+                if (activeListing){
+                    activeListing.classList.add('active');
+                }
+            });
+        });
+
+        let activeFilters = 3; // Is use to check if the user selects at least one filter
+
+        // Change the filter button state
+        function setFilterState(selectIcon, filterButton ,logo){
+            if (filterButton.classList.contains('clicked')) {   // If the filter is active
+                filterButton.classList.remove('clicked'); 
+
+                // Change filter button to inactive state
+                selectIcon.classList.add('d-none');
+                logo.classList.remove('active');
+
+                activeFilters -= 1;
+
+            } else {                                            // Else if the filter is not active
+                filterButton.classList.add('clicked');
+
+                // Change filter button to active state
+                selectIcon.classList.remove('d-none');
+                logo.classList.add('active');
+
+                activeFilters += 1;
+            }
+
+            // Check if there is at least one active filter, enable searchbar if there is, disable searcbar if there are none
+            let input = document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0];
+            if (activeFilters == 0){                            // if no filters are active
+                //Disable search bar
+                input.disabled = true;
+
+                // Add red outline at the search bar
+                input.classList.add('disable-search');
+
+                //Display error message
+                let searchCol = document.getElementById('search-col');
+                let alert = document.createElement('div');
+                alert.className = "error-background px-3 py-2 mt-2 mb-0";
+                alert.id = "filterError";
+                alert.innerHTML = `<span class="error-text">Please select at least one filter</span>`;
+                searchCol.appendChild(alert);
+            } else {                                            // if there is at least one filter acitve
+                //Enable search bar
+                input.disabled = false;
+
+                // Add remove red outline at the search bar
+                input.classList.remove('disable-search');
+
+                // Remove error message
+                let errorNotification = document.getElementById("filterError");
+                if (errorNotification){
+                    errorNotification.remove();
+                }
+            }
+        }
+
+        // Resets the location list when the filter buttons are clicked
+        function resetLocationList() {
+            // If the variable that contains the locations within the suburb is not empty
+            if (locationsWithinSuburb){
+                let filteredLocationsWithinSuburb = filterLocationServices(locationsWithinSuburb);
+
+                // Remove the current location list
+                const listings = document.getElementById('location-list-container');
+                while (listings.firstChild) {
+                    listings.removeChild(listings.firstChild);
+                }
+
+                // Getting the location list data
+                let locationsCollection;
+                if (filteredLocationsWithinSuburb.length != 0) {                        // If there are locations within the suburb, provide the locations within the suburb
+                    locationsCollection = { features: filteredLocationsWithinSuburb };
+
+                    // Remove alert
+                    let alertNotification = document.getElementById("alert");
+                    if (alertNotification){
+                        alertNotification.remove();
+                    }
+                } else {                                                                // Else provide Top 10 nearest recommendations
+                    let nearestLocations = filterLocationServices(geojson.features);    // Get the list of locations with the selected services
+                    locationsCollection = { features: nearestLocations.slice(0, 10)};   // Get top 10 nearest
+
+                    // Remove previous alert
+                    let alertNotification = document.getElementById("alert");
+                    if (alertNotification){
+                        alertNotification.remove();
+                    }
+
+                    // Add alert
+                    let freeTestingStatus = document.getElementById('free-testing').classList.contains('active');
+                    let anonymousTestingStatus = document.getElementById('anonymous-testing').classList.contains('active');
+                    let freeCondom = document.getElementById('free-condom').classList.contains('active');
+                    let servicesMsg = "";
+                    if (freeTestingStatus){                 // If free testing filter is active
+                        servicesMsg += 'Free testing';
+                    }
+                    if (anonymousTestingStatus){            // If anonymous testing filter is active
+                        if (servicesMsg != ""){
+                            servicesMsg += "/";
+                        }
+                        servicesMsg += 'Anonymous testing';
+                    }
+                    if (freeCondom) {                       // If free condom filter is active
+                        if (servicesMsg != "") {
+                            servicesMsg += "/";
+                        }
+                        servicesMsg += 'Free condoms';
+                    }
+
+                    // If there are at least one active filters display the alert message
+                    if (servicesMsg !== ""){
+                        let mapCol = document.getElementById('map-col');
+                        let alert = document.createElement('div');
+                        alert.className = "alert alert-danger alert-dismissible fade show";
+                        alert.role = "alert";
+                        alert.id = "alert";
+                        alert.innerHTML = ` <i class="fa-solid fa-circle-exclamation alert-icon"></i>
+                                                    <span>No ${servicesMsg} in this suburb. Here are some of the nearest locations from this suburb!</span>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                        mapCol.insertBefore(alert, mapCol.firstChild);
+                    } 
+                    // Else if there are no active filters, display this message in location list
+                    else {
+                        let listings = document.getElementById(`location-list-container`);
+                        let message = document.createElement('p');
+                        message.className = 'location-list-message text-center';
+                        message.innerHTML = 'Please select at least one filter to display locations';
+                        listings.appendChild(message);
+                    }
+                }
+
+                // Rebuild location list
+                buildLocationList(locationsCollection);
+            }
+            return;
+        }
+
+        // Change free testing filter button state
+        function toggleStateFreeTesting() {
+            let filterButton = document.getElementById('free-testing');
+            let selectIcon = document.getElementById('free-testing-selected');
+            let logo = document.getElementById('free-testing-logo');
+            setFilterState(selectIcon, filterButton, logo);
+
+            // Apply service filters to the current location list
+            resetLocationList();
+        }
+
+        // Change anonymous testing filter button state
+        function toggleStateAnonymous() {
+            let filterButton = document.getElementById('anonymous-testing');
+            let selectIcon = document.getElementById('anonymous-testing-selected');
+            let logo = document.getElementById('anonymous-testing-logo');
+            setFilterState(selectIcon, filterButton, logo);
+
+            // Apply service filters to the current location list
+            resetLocationList();
+        }
+
+        // Change free condom filter button state
+        function toggleStateFreeCondom() {
+            let filterButton = document.getElementById('free-condom');
+            let selectIcon = document.getElementById('free-condom-selected');
+            let logo = document.getElementById('free-condom-logo');
+            setFilterState(selectIcon, filterButton, logo);
+
+            // Apply service filters to the current location list
+            resetLocationList();
+        }
+        
+        // Set the map fog
+        map.on('style.load', () => {
+            // Set the default atmosphere style
+            map.setFog({});
+        });
+
+        // Function that changes the location list position depends on the screen size
+        $(function() {
+            // Display the location after the map if the screen size is < 768 pixels
+            if ($(window).width() < 768) {
+                $('#location-list-col').appendTo('#map-location');
+            };
+
+            // Dynamically adjust the position of the location list based on the screen size
+            $(window).on('resize', function() {
+                if ($(window).width() < 768) {
+                    $('#location-list-col').appendTo('#map-location');
+                } else {
+                    $('#map-col').appendTo('#map-location');
+                }
+            });
+        });
+    </script>
+}

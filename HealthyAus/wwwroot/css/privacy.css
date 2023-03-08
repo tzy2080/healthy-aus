@@ -1,0 +1,24 @@
+﻿.background {
+    background-color: rgba(244, 151, 108, 0.9);
+    min-height: 80vh;
+    padding-top: 150px;
+}
+
+.title {
+    color: #59242E;
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+.text-heading {
+    color: #59242E;
+    font-weight: 500;
+    font-size: 1.2rem;
+    margin-bottom: 0px;
+}
+
+.text {
+    color: #414141;
+    font-weight: 500;
+    font-size: 1.05rem;
+}

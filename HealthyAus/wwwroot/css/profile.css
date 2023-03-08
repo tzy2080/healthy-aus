@@ -1,0 +1,50 @@
+﻿.background {
+    background-color: rgba(244, 151, 108, 0.9);
+    min-height: 80vh;
+    padding-top: 140px;
+}
+
+.title {
+    color: #59242E;
+    font-weight: 500;
+    font-size: 2rem;
+}
+
+.sub-title {
+    color: #59242E;
+    font-weight: 500;
+    font-size: 1.4rem;
+    margin-bottom: 0px;
+}
+
+.profile-nav-link {
+    color: #59242E !important;
+    font-weight: 500;
+}
+
+.profile-nav-link.active {
+    color: #fff !important;
+}
+
+.section-title {
+    color: #59242E;
+    font-weight: 500;
+    font-size: 1.6rem;
+}
+
+.section-text {
+    color: #59242E;
+}
+
+.labels {
+    font-weight: 500;
+    color: #414141;
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+.input-text {
+    color: #414141 !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+}

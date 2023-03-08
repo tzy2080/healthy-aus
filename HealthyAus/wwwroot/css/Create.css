@@ -1,0 +1,105 @@
+﻿.main-body {
+    background-color: rgba(244, 151, 108, 0.7);
+    min-height: 80vh;
+    padding-top: 140px;
+    padding-bottom: 100px;
+}
+
+.title {
+    font-weight: 600;
+    font-size: 1.8rem;
+    color: #59242e;
+}
+
+.form-background {
+    background-color: #fff;
+    border-radius: 12px;
+    padding-top: 50px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 50px;
+}
+
+.modal-label-set {
+    color: #5e6d65;
+    font-weight: 500
+}
+
+.fs-sub-label {
+    font-size: 0.9rem;
+    color: #5e6d65;
+    font-weight: 500
+}
+
+.btn-modal-qr-code {
+    background-color: #27ae60;
+    border-color: #27ae60;
+    color: white;
+    border-radius: 10px;
+}
+
+.btn-modal-qr-code:hover {
+    background-color: #27ae60;
+    border-color: #27ae60;
+    color: white;
+}
+
+.modal-label-set {
+    color: #5e6d65;
+}
+
+.input-text {
+    color: #53625A;
+}
+
+.modal-footer-pad {
+    padding-top: 20px;
+}
+
+.btn-modal-submit {
+    padding-left: 100px;
+    padding-right: 100px;
+    border-radius: 10px;
+    background-color: #27ae60;
+    border-color: #27ae60;
+    color: white;
+}
+
+.btn-modal-submit:hover {
+    color: white !important;
+}
+
+.return-link {
+    text-decoration: none;
+    font-weight: 400;
+}
+
+.user-status {
+    font-weight: 500;
+}
+
+/*QR scanner container*/
+#video-container {
+    line-height: 0;
+}
+
+/*QR scanner element*/
+#qr-video {
+    width: 100%;
+    height: 100%;
+}
+
+/*QR scanner box*/
+#video-container.example-style-1 .scan-region-highlight-svg,
+#video-container.example-style-1 .code-outline-highlight {
+    stroke: #64a2f3 !important;
+}
+
+#stop-button {
+    background-color: #27ae60;
+    border-color: #27ae60;
+}
+
+.user-added {
+    color: #27ae60;
+}

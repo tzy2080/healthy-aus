@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HealthyAus</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HealthyAus.styles.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/bootstrap-select.css" asp-append-version="true">
+    <script src="https://kit.fontawesome.com/71a6ca7ef4.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-light navbar-expand-lg py-4 fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand ps-xl-2 px-xxl-4 home-link" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/img/healthyaus.svg" width="57px" height="45px" class="nav-logo"/>HealthyAus</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                    <span><i class="fa-solid fa-bars py-1"></i></span>
+                </button>
+                <div class="collapse navbar-collapse me-xxl-5" id="navbarText">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item me-3">
+                            <a class="nav-link nav-item-link py-0 px-1" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item me-3">
+                            <a class="nav-link nav-item-link py-0 px-1" asp-area="" asp-controller="ContactTracing" asp-action="Index">Contact tracing</a>
+                        </li>
+                        <li class="nav-item me-3">
+                            <a class="nav-link nav-item-link py-0 px-1" asp-area="" asp-controller="TestServicesFreeCondoms" asp-action="Index">Test Services/Free Condoms</a>
+                        </li>
+                        <li class="nav-item me-3 dropdown">
+                            <a class="nav-link nav-menu-link py-0 px-1 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                STI
+                            </a>
+                            <ul class="dropdown-menu nav-dropdown" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item nav-dropdown-item" asp-area="" asp-controller="STI" asp-action="Index">STI Info</a></li>
+                                <li><a class="dropdown-item nav-dropdown-item" asp-area="" asp-controller="Stats" asp-action="Index">STI Stats</a></li>
+                                <li><a class="dropdown-item nav-dropdown-item" asp-area="" asp-controller="Monkeypox" asp-action="Index">Monkeypox</a></li>
+                                <li><a class="dropdown-item nav-dropdown-item" asp-area="" asp-controller="PublicConversation" asp-action="Index">Twitter trends</a></li>
+                            </ul>
+                        </li>
+                        <partial name="_LoginPartial" />
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main role="main">
+        @RenderBody()
+    </main>
+    <footer>
+        <div class="container">
+            <div class="row pb-4">
+                <div class="col-md-4 col-lg-3">
+                    <img src="~/img/healthyaus.svg" class="footer-logo" />
+                    <span class="footer-name ps-2">HealthyAus</span>
+                </div>
+                <div class="col-md-4 col-lg-2 pt-4">
+                    <p class="footer-heading mb-0">Quick Links</p>
+                    <p class="footer-text mb-0"><a class="footer-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></p>
+                    <p class="footer-text mb-0"><a class="footer-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy Policy</a></p>
+                </div>
+                <div class="col-md-4 col-lg-3 pt-4">
+                    <p class="footer-heading mb-0">Features</p>
+                    <p class="footer-text mb-0"><a class="footer-link" asp-area="" asp-controller="ContactTracing" asp-action="Index">Contact tracing</a></p>
+                    <p class="footer-text mb-0"><a class="footer-link" asp-area="" asp-controller="TestServicesFreeCondoms" asp-action="Index">Test Services/Free Condoms</a></p>
+                    <p class="footer-text mb-0"><a class="footer-link" asp-area="" asp-controller="STI" asp-action="Index">STI Info</a></p>
+                    <p class="footer-text mb-0"><a class="footer-link" asp-area="" asp-controller="Stats" asp-action="Index">STI Stats</a></p>
+                    <p class="footer-text mb-0"><a class="footer-link" asp-area="" asp-controller="Monkeypox" asp-action="Index">Monkeypox</a></p>
+                    <p class="footer-text mb-0"><a class="footer-link" asp-area="" asp-controller="PublicConversation" asp-action="Index">Twitter trends</a></p>
+                </div>
+                <div class="col-md-4 col-lg-3 pt-4">
+                    <p class="footer-heading mb-0">Attribution</p>
+                    <p class="footer-text mb-0"><a class="footer-link" href="https://www.freepik.com/free-vector/male-gay-couple-with-rainbow-heart_9650054.htm#query=gay%20men&position=17&from_view=search">Image by pch.vector</a></p>
+                </div>
+            </div>
+            <div class="row justify-content-center mt-4">
+                <div class="col-6 text-center">
+                    <p class="copy-right mb-0">Copyright &copy; 2022 HealthyAus</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/bootstrap-select.js"></script>
+    <script>
+        // Add underline on active nav link
+        $(function () {
+            var path = window.location.href;
+            if ($(document).width() >= 992) {
+                $('.nav-item-link').each(function () {
+                    if (this.href === path) {
+                        $(this).addClass('active');
+                    }
+                })
+            }
+        });
+
+        // Change color of navbar after scrolling
+        $(window).on('scroll', function () {
+            if ($(window).scrollTop()) {
+                $('.navbar').addClass('nav-scroll')
+            }
+            else {
+                $('.navbar').removeClass('nav-scroll');
+            }
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

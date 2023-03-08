@@ -1,0 +1,500 @@
+﻿@{
+    ViewData["Title"] = "Contact Tracing";
+}
+
+@model List<HealthyAus.Models.CONTACTTRACING>
+
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <link rel="stylesheet" href="~/css/ContactTracing.css" asp-append-version="true" />
+
+    @functions {
+        // Splits string seperated by comma
+        string[] splitMsg(string msg)
+        {
+            string[] result = msg.Split(",");
+            return result;
+        }
+
+        // Sorts the encounter history in descending order
+        List<CONTACTTRACING> sortHistory(List<CONTACTTRACING> history) {
+            history.Sort((x, y) => y.encounter_date.CompareTo(x.encounter_date));
+            return history;
+        }
+
+        // Sorts the notifications in descending order
+        List<CONTACTTRACING> sortNotification(List<CONTACTTRACING> notification)
+        {
+            notification.Sort((x, y) => Convert.ToDateTime(splitMsg(y.notification_msg).Last()).CompareTo(Convert.ToDateTime(splitMsg(x.notification_msg).Last())));
+            return notification;
+        }
+
+        // Get the list of sorted notifications
+        List<CONTACTTRACING> getNotification(List<CONTACTTRACING> encounters)
+        {
+            // Initialise a new list
+            List<CONTACTTRACING> notifications = new List<CONTACTTRACING>();
+
+            // Get the notifications
+            foreach (var item in encounters){
+                if (item.notify_status == 1){
+                    notifications.Add(item);
+                }
+            }
+            //Sort the notification
+            return sortNotification(notifications);
+        }
+
+        // Generate message for multiple STI
+        string multipleSTI(string[] msg){
+            string result = "";
+            int totalCount = msg.Length-1;
+            for (int i = 0; i < totalCount; i++){
+                if (i == (totalCount-1)){
+                    result += msg[i];
+                }
+                else{
+                    result += msg[i];
+                    result += ", ";
+                }
+            }
+            
+            return result;
+        }
+    }
+
+    <div class="top-banner w-100 d-flex justify-content-center">
+        <div class="container-fluid px-sm-5 px-3">
+            <div class="row justify-content-center">
+                <div class="col-xl-9 col-lg-10 col-md-10">
+                    <div class="row align-items-center">
+                        <div class="col-lg-5 px-0 text-center">
+                            <img class="banner-img img-fluid" src="~/img/contacttracing.svg" alt="Contact tracing banner image" />
+                        </div>
+                        <div class="col-lg-7 pb-5">
+                            <h1 class="heading-title">Contact tracing</h1>
+                            <h5 class="heading-text">Keep track of your sexual encounters</h5>
+                            <h5 class="heading-text">Easily notify your past sexual partners if you are diagnosed with an STI</h5>
+                            <h5 class="heading-text">Get notified if your past sexual partner is diagnosed with an STI</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid main-body py-5">
+        <div class="row justify-content-center mb-2">
+            <div class="col-lg-8 col-md-12 col-sm-10 col-12 mt-2">
+                <!-- Display in screen width above sm-->
+                <div class="d-none d-sm-block">
+                    <button type="button" class="btn btn-primary btn-contact-tracing-func mt-3 me-2" data-bs-toggle="modal" data-bs-target="#howtouse-Modal">
+                        <i class="bi bi-info-circle fs-6 fw-bold"></i>
+                        <span>How to use</span>
+                    </button>
+                    <a class="btn btn-primary btn-contact-tracing-func mt-3" asp-controller="ContactTracing" asp-action="Create">
+                        <i class="bi bi-plus-lg fs-6 fw-bold"></i>
+                        <span class="fs-6">Record new encounter</span>
+                    </a>
+                    <a href="#" class="bi bi-info-circle-fill function-tool-tip me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Record your sexual encounter"></a>
+                    <button type="button" class="btn btn-primary btn-contact-tracing-func mt-3" data-bs-toggle="modal" data-bs-target="#notify-Modal">
+                        <i class="bi bi-bell-fill fs-6 fw-bold"></i>
+                        <span>Notify others</span>
+                    </button>
+                    <a href="#" class="bi bi-info-circle-fill function-tool-tip me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Notify your partners if you are tested positive"></a>
+                    <button type="button" class="btn btn-primary btn-contact-tracing-func mt-3" data-bs-toggle="modal" data-bs-target="#qr-Modal">
+                        <i class="bi bi-qr-code fs-6 fw-bold"></i>
+                        <span>Show QR code</span>
+                    </button>
+                    <a href="#" class="bi bi-info-circle-fill function-tool-tip me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Click this button to show your QR code when your partner is recording a new encounter"></a>
+                </div>
+                <!-- Display in screen width below sm-->
+                <div class="d-block d-sm-none">
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary btn-contact-tracing-func mt-3" data-bs-toggle="modal" data-bs-target="#howtouse-Modal">
+                                <i class="bi bi-info-circle fs-6 fw-bold"></i>
+                                <span>How to use</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <a class="btn btn-primary btn-contact-tracing-func mt-3" asp-controller="ContactTracing" asp-action="Create">
+                                <i class="bi bi-plus-lg fs-6 fw-bold"></i>
+                                <span class="fs-6">Record new encounter</span>
+                            </a>
+                            <a href="#" class="bi bi-info-circle-fill function-tool-tip me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Record your sexual encounter"></a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary btn-contact-tracing-func mt-3" data-bs-toggle="modal" data-bs-target="#notify-Modal">
+                                <i class="bi bi-bell-fill fs-6 fw-bold"></i>
+                                <span>Notify others</span>
+                            </button>
+                            <a href="#" class="bi bi-info-circle-fill function-tool-tip me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Notify your partners if you are tested positive"></a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary btn-contact-tracing-func mt-3" data-bs-toggle="modal" data-bs-target="#qr-Modal">
+                                <i class="bi bi-qr-code fs-6 fw-bold"></i>
+                                <span>Show QR code</span>
+                            </button>
+                            <a href="#" class="bi bi-info-circle-fill function-tool-tip me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Click this button to show your QR code when your partner is recording a new encounter"></a>
+                        </div>
+                    </div>
+                </div>
+                <div id="display-success-message"></div>
+
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6 col-sm-10 col-12 mt-2">
+                <div class="encounter-background">
+                    <p class="mt-3">
+                        <i class="bi bi-clock-history fs-5 box-title mx-2"></i>
+                        <span class="fs-5 fw-bold box-title">Encounter History</span>
+                    </p>
+                    <div class="form-body pe-3" id="encounter-form">
+                        @if (Model.Count == 0){
+                            <p class="notification-text mt-3 mb-0">There is currently no encounter history.</p>
+                            <p class="notification-text">Record your encounter using the Record new encounter button.</p>
+                        }
+                        @foreach (var item in sortHistory(Model))
+                        {
+                            <div class="d-flex justify-content-between">
+                                <p class="encounter-date"><i class="bi bi-calendar-event-fill"></i> &nbsp @item.encounter_date.ToString("dd/MM/yyyy")</p>
+                                <h5>@Html.ActionLink("Edit", "Edit", new { id = item.id }, new { @class = "encounter-edit-btn" }) <i class="bi bi-pencil-square"></i> </h5>
+                            </div>
+                            <div>
+                                <p class="mb-0 encounter-comments-label">
+                                    Comments:
+                                </p>
+                                <span class="encounter-comments">@item.comment</span>
+                            </div>
+                            <hr />
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-10 col-12 mt-2">
+                <div class="inbox-background">
+                    <p class="mt-3">
+                        <i class="bi bi-bell-fill fs-5 box-title mx-2"></i>
+                        <span class="fs-5 fw-bold box-title">Notification Inbox</span>
+                    </p>
+                    <div class="form-body" id="inbox-form">
+                        @if (getNotification(Model).Count == 0)
+                        {
+                            <p class="notification-text mt-3">You have not received any notifications</p>
+                        }
+                        @foreach (var item in getNotification(Model))
+                        {
+                            @if (splitMsg(item.notification_msg)[0] == "" || splitMsg(item.notification_msg)[0] == "Other")
+                            {
+                                <div class="px-md-2 px-lg-3 border-bottom">
+                                    <div class="row">
+                                        <p class="encounter-date"><i class="bi bi-calendar-event-fill"></i> &nbsp @splitMsg(@item.notification_msg).Last()</p>
+                                        <p class="mb-0 notification-text">One of your encounters has reported the diagnosis of an STI</p>
+                                        <p class="notification-text">Please get tested</p>
+                                    </div>
+                                </div>
+                            }
+                            else {
+                                <div class="px-md-2 px-lg-3 border-bottom">
+                                    <div class="row">
+                                        <p class="mb-1 encounter-date"><i class="bi bi-calendar-event-fill"></i> &nbsp @splitMsg(@item.notification_msg).Last()</p>
+                                        <p class="mb-0 notification-text">One of your encounters has reported the diagnosis of
+                                            @multipleSTI(splitMsg(item.notification_msg))
+                                        </p>
+                                        <p class="notification-text">Please get tested</p>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-8 col-md-12 col-sm-10 col-12">
+                <div class="row">
+                    <div class="col-11 col-sm-6 col-md-5 col-lg-4 mt-3">
+                        <p class="mb-1 related-links">Related Links</p>
+                        <p class="mb-1"><a asp-area="" asp-controller="TestServicesFreeCondoms" asp-action="Index" class="links">Find where to get tested</a></p>
+                        <p class="mb-1"><a asp-area="" asp-controller="STI" asp-action="Index" class="links">Get information of various STIs</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification modal -->
+        <div class="modal fade" id="notify-Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-radius">
+                    <div class="d-flex justify-content-end py-3 px-3">
+                        <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-12 text-center">
+                            <h5 class="modal-title fs-2" id="modalLabel">
+                            Notify others
+                            </h5>
+                            <h6 class="heading-text">Notify your partners if you are tested positive</h6>
+                        </div>
+                    </div>
+                    <div class="modal-body px-5" id="notification-modal">
+                        <form>
+                            <input type="text" class="form-control" id="id" value="@ViewBag.id" hidden />
+                            <div class="mb-3">
+                                <label class="col-form-label modal-label-set">
+                                    Type of STI
+                                    <span class="fs-sub-label">(optional)</span>
+                                </label>
+                                <select class="selectpicker select-btn" data-width="100%" data-live-search="true" data-actions-box="true" id="sti-type" multiple title="Select Type of STI">
+                                    <option>Bacterial Vaginosis</option>
+                                    <option>Chlamydia</option>
+                                    <option>Genital Herpes</option>
+                                    <option>Genital warts</option>
+                                    <option>Gonorrhoea</option>
+                                    <option>Hepatitis A</option>
+                                    <option>Hepatitis B</option>
+                                    <option>Hepatitis C</option>
+                                    <option>HIV</option>
+                                    <option>HPV</option>
+                                    <option>Infectious syphilis</option>
+                                    <option>Lymphogranuloma venereum (LGV)</option>
+                                    <option>Monkeypox</option>
+                                    <option>Mycoplasma genitalium</option>
+                                    <option>Pubic Lice</option>
+                                    <option>Scabies</option>
+                                    <option>Shigella</option>
+                                    <option>Trichomoniasis</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="container-fluid px-0">
+                                <label class="col-form-label modal-label-set py-0">Notify partners encountered</label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="col-form-label modal-label-set-sm pb-0 pt-0">
+                                                From
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="date" class="form-control input-field-text py-2" id="from-date" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="col-form-label modal-label-set-sm pb-0 pt-0">
+                                                To
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="date" class="form-control input-field-text py-2" id="to-date" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-btn d-flex justify-content-center modal-footer-pad">
+                        <button type="button" class="btn btn-modal-submit" onclick="sendNotification()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--QR Modal-->
+        <div class="modal fade"
+             id="qr-Modal"
+             tabindex="-1"
+             aria-labelledby="ModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-radius">
+                    <div class="d-flex justify-content-end py-3 px-3">
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body px-5 justify-content-center">
+                        <div class="row text-center">
+                            <h6 class="heading-text">Please show this QR code to your partner when recording a new encounter</h6>
+                        </div>
+                        <img class="img-fluid" src="@ViewBag.qrcode">
+                    </div>
+                    <div class="modal-btn d-flex justify-content-center modal-footer-pad">
+                        <a href="@ViewBag.qrcode" type="button" class="btn btn-modal-download mx-1 mx-sm-2" download="user_qr_code">Download</a>
+                        <button type="button" class="btn btn-modal-close mx-1 mx-sm-2" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--How to use -->
+        <!--QR Modal-->
+        <div class="modal fade"
+            id="howtouse-Modal"
+            tabindex="-1"
+            aria-labelledby="ModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content modal-radius">
+                    <div class="d-flex justify-content-end py-1 px-3">
+                        <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body px-5 py-0 justify-content-center">
+                        <h4 class="mb-0 heading-text mb-2">How to use HealthyAus's contact tracing feature</h4>
+                        <p class="mb-0 user-guide-subheading">Recording a new sexual encounter</p>
+                        <ol type="1">
+                            <li>You can record a new sexual encounter with your partner by clicking the <strong>Record new encounter</strong> button on the dashboard.</li>
+                            <li>You may include your partner in your encounter by scanning your partner's QR code using the <strong>Scan QR  Code</strong> button. Your partner's QR code can be found by clicking the <strong>Show QR code</strong> button on the dashboard of your partner's account.</li>
+                            <li>Note that your partner's QR code must be scanned for the notification feature to work.</li>
+                            <li>Next, select the date and time of the encounter.</li>
+                            <li>Finally, click the <strong>Create</strong> button to record your encounter.</li>
+                            <li>Once successfully recorded, you will be directed back to the dashboard and the newly created encounter will be displayed at the <strong>Encounter History</strong> box.</li>
+                        </ol>
+                        <p class="mt-2 mb-0 user-guide-subheading">Anonymously notifying your partners if you are tested positive</p>
+                        <ol type="1">
+                            <li>Note that the notification will only work if the users are added to the encounter using the QR code.</li>
+                            <li>You can anonymously notify your partners by clicking the <strong>Notify others</strong> button on the dashboard.</li>
+                            <li>You may specify the type/types of STI you have using the dropdown menu. If the type of STI is not in the list, please select the <strong>Other</strong> option.</li>
+                            <li>You can notify the partners that you have encountered in a specific time period by adjusting the <strong>From</strong> and <strong>To</strong> dates.</li>
+                            <li>Finally, click the <strong>Submit</strong> button to notify your partners.</li>
+                        </ol>
+                        <p class="mt-2 mb-0 user-guide-subheading">Showing your QR code to your partner</p>
+                        <ol type="1">
+                            <li>You can show your QR code to your partner by clicking the <strong>Show QR code</strong> button on the dashboard.</li>
+                            <li>Your QR code will be displayed and you can download it by clicking the <strong>Download</strong> button.</li>
+                        </ol>
+                        <p class="mt-2 mb-0 user-guide-subheading">Receiving notification from your partner</p>
+                        <ol type="1">
+                            <li>Notifications will be displayed in the <strong>Notification Inbox</strong>.</li>
+                        </ol>
+                    </div>
+                    <div class="modal-btn d-flex justify-content-center modal-footer-pad">
+                        <button type="button" class="btn btn-modal-close mx-1 mx-sm-2" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    @section Scripts {
+    <script>
+        // Generate tooltip
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+
+        // Function that displays error message if there is an issue in creating notification
+        function displayErrorMessage(){
+            let errorMessage = document.getElementById('error-message');
+
+            // If not error message is displayed
+            if (!errorMessage) {
+                let notificationModal = document.getElementById("notification-modal");
+                let message = document.createElement('div');
+                message.id = "error-message";
+                message.role = "alert";
+                message.className = "alert alert-danger alert-dismissible fade show";
+                message.innerHTML = `<strong>Error in creating notification </strong> Please ensure that the time period is valid <button type = "button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" ></button>`;
+                notificationModal.insertBefore(message, notificationModal.firstChild);
+            }
+        }
+
+        // Function that creates the notification
+        function sendNotification() {
+            // Get all inputs
+            var id = $('#id').val();
+            var message = $('#sti-type').val();
+            var date1 = $('#from-date').val();
+            var date2 = $('#to-date').val();
+
+            // If date range is valid
+            if (date2 >= date1){
+                // Ajax call
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: "/ContactTracing/notification",
+                        data: { "id": id, "message": message, "date1": date1, "date2": date2 },
+                        success: function (response) {
+                            // If successfully added
+                            if (response) {
+                                // Reset input
+                                $('#sti-type').selectpicker('deselectAll');
+                                $('#from-date').val("");
+                                $('#to-date').val("");
+
+                                // Close modal
+                                $('#notify-Modal').modal('toggle');
+
+                                // Remove error message
+                                $("#error-message").alert('close');
+
+                                // Display success message if no success message is displayed
+                                let successMessage = document.getElementById('success-message');
+
+                                if (!successMessage) {
+                                    let displayMessage = document.getElementById("display-success-message");
+                                    let message = document.createElement('div');
+                                    message.id = "success-message";
+                                    message.role = "alert";
+                                    message.className = "alert alert-success alert-dismissible fade show mt-3";
+                                    message.innerHTML = `Users are successfully notified<button type = "button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                                    displayMessage.appendChild(message);
+                                }
+                            }
+                            // If not successfully added
+                            else {
+                                // Remove success message
+                                $("#success-message").alert('close');
+
+                                // Display error message if no error message is displayed
+                                displayErrorMessage();
+                            }
+                        },
+                        error: function () {
+                            // Remove success message
+                            $("#success-message").alert('close');
+
+                            // Display error message if no error message is displayed
+                            displayErrorMessage();
+                        }
+                    });
+            }
+            // If the date range is not valid display error message
+            else {
+                // Display error message if no error message is displayed
+                displayErrorMessage();
+            }
+            
+        }
+    </script>
+    }
+}
+else
+{
+    <meta http-equiv="refresh" content="0; url = @Url.Content("~/Identity/Account/Login")" />
+}

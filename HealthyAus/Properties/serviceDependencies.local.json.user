@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "mssql2": {
+      "restored": true,
+      "restoreTime": "2022-10-01T04:07:49.1305229Z"
+    },
+    "mssql1": {
+      "restored": true,
+      "restoreTime": "2022-08-29T04:54:02.0145245Z"
+    },
+    "secrets1": {
+      "restored": true,
+      "restoreTime": "2022-08-29T04:53:45.0788032Z"
+    }
+  },
+  "parameters": {
+    "mssql1.subscriptionId": {
+      "Name": "mssql1.subscriptionId",
+      "Type": "subscription",
+      "Value": "9975ec7d-ae4b-4614-aa12-9f120c4dddab"
+    },
+    "mssql1.resourceGroupName": {
+      "Name": "mssql1.resourceGroupName",
+      "Type": "resourceGroup",
+      "Value": "healthyAus"
+    }
+  }
+}

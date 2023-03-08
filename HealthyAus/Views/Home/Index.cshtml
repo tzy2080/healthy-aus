@@ -1,0 +1,182 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<link rel="stylesheet" href="~/css/Hp.css" />
+
+<div class="welcome-section w-100 d-flex justify-content-center">
+    <div class="container-fluid px-sm-5 px-3">
+        <div class="row justify-content-center align-items-center my-auto">
+            <div class="col-lg-6 text-center">
+                <img class="home-img img-fluid" src="~/img/home1.svg" alt="home-img" />
+            </div>
+            <div class="col-lg-6 text-center text-lg-start">
+                <div class="row">
+                    <div class="col-12 col-lg-10">
+                        <h1 class="wel-word mb-4">Welcome to HealthyAus</h1>
+                        <div class="wel-desc mb-2">Men who have sex with men have higher risks of contracting sexually transmitted infections.</div>
+                        <div class="wel-desc mb-2">Sexual health is an important part of our general health and wellbeing</div>
+                        <div class="wel-desc mb-1">Check out how we can help with your sexual journey</div>
+                        <a type="button" class="btn btn-lg btn-outline-primary btn-hero-feature mt-4 mr-3" asp-area="" asp-controller="ContactTracing" asp-action="Index">
+                            Contact Tracing
+                        </a>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-lg btn-primary btn-disclaimer mt-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Disclaimer
+                        </button>
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">DISCLAIMER</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>
+                                            The medical information on this site is provided as an information resource only, and
+                                            is not to be used or relied on for any diagnostic or treatment purposes.
+                                        </p>
+                                        <p>
+                                            This information does not create any patient-doctor relationship, and should not be
+                                            used as a substitute for professional diagnosis and treatment.
+                                        </p>
+                                        <p>
+                                            Please consult your health care provider before making any health care decisions or
+                                            for guidance about a specific medical condition.
+                                        </p>
+                                        <p>
+                                            We expressly disclaims responsibility, and shall have no liability, for any damages, loss,injury, or liability whatsoever suffered as a result of your reliance on the information
+                                            contained in this site.
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary btn-disclaimer" data-bs-dismiss="modal">I Understand!</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-6 text-center">
+                <a href="#features">
+                    <i class="bi bi-chevron-down down"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="backgr-2" id="features">
+    <div class="container">
+        <h2 class="text-center" id="feature">Features</h2>
+        <p class="text-center" id="feature-desc">
+            Protect yourself from STIs by using our various features
+        </p>
+        <div class="row cd-bg">
+            <div class="col-12">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card card-bg mb-3 cd-width text-center mx-auto">
+                            <img src="~/img/contacttracing.svg"
+                                 class="card-img-top cd-img"
+                                 alt="Contact Tracing" />
+                            <div class="card-body">
+                                <h5 class="card-title">Contact Tracing</h5>
+                                <br>
+                                <p class="card-text cd-text">
+                                    Protect yourself and others using the contact tracing feature
+                                </p>
+                                <a class="btn btn-outline-primary btn-cd border-2 btn-hv" asp-area="" asp-controller="ContactTracing" asp-action="Index">LEARN MORE</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card card-bg mb-3 cd-width mx-auto text-center">
+                            <img src="~/img/STIs.svg"
+                                 class="card-img-top cd-img"
+                                 alt="STIs" />
+                            <div class="card-body">
+                                <h5 class="card-title">STI Info</h5>
+                                <br />
+                                <p class="card-text cd-text">
+                                    Get information of various STIs
+                                </p>
+                                <a class="btn btn-outline-primary btn-cd border-2 btn-hv" asp-area="" asp-controller="STI" asp-action="Index">LEARN MORE</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 ">
+                        <div class="card card-bg mb-3 cd-width text-center mx-auto">
+                            <img src="~/img/Stats.svg"
+                                 class="card-img-top cd-img"
+                                 alt="Trends" />
+                            <div class="card-body">
+                                <h5 class="card-title">STI Stats</h5>
+                                <br />
+                                <p class="card-text cd-text">
+                                    Keep yourself updated with the latest trends and statistics
+                                    of various STIs
+                                </p>
+                                <a class="btn btn-outline-primary btn-cd border-2 btn-hv" asp-area="" asp-controller="Stats" asp-action="Index">LEARN MORE</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 mt-lg-3">
+                        <div class="card card-bg mb-3 cd-width text-center mx-auto">
+                            <img src="~/img/Monkeypox.svg"
+                                 class="card-img-top cd-img"
+                                 alt="Monkeypox" />
+                            <div class="card-body">
+                                <h5 class="card-title">Monkeypox</h5>
+                                <br />
+                                <p class="card-text cd-text">
+                                    Get updated with the latest info about monkeypox
+                                </p>
+                                <a class="btn btn-outline-primary btn-cd border-2 btn-hv" asp-area="" asp-controller="Monkeypox" asp-action="Index">LEARN MORE</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 mt-lg-3">
+                        <div class="card card-bg mb-3 cd-width text-center mx-auto">
+                            <img src="~/img/map.svg"
+                                 class="card-img-top cd-img"
+                                 alt="Test Service/ Free Condoms" />
+                            <div class="card-body">
+                                <h5 class="card-title">Test Services/Free Condoms</h5>
+                                <p class="card-text cd-text">
+                                    Look for nearby test services and free condoms
+                                </p>
+                                <a class="btn btn-outline-primary btn-cd border-2 btn-hv" asp-area="" asp-controller="TestServicesFreeCondoms" asp-action="Index">LEARN MORE</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 mt-lg-3">
+                        <div class="card card-bg mb-3 cd-width text-center mx-auto">
+                            <img src="~/img/public_conversation.svg"
+                                 class="card-img-top cd-img"
+                                 alt="Public Conversation" />
+                            <div class="card-body">
+                                <h5 class="card-title">Twitter trends</h5>
+                                <br>
+                                <p class="card-text cd-text">
+                                    Know what other people are saying about STIs on Twitter
+                                </p>
+                                <a class="btn btn-outline-primary btn-cd border-2 btn-hv" asp-area="" asp-controller="PublicConversation" asp-action="Index">LEARN MORE</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,154 @@
+﻿@model HealthyAus.Models.CONTACTTRACING
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/Create.css" />
+
+<div class="main-body">
+    <div class="row justify-content-center mx-0">
+        <div class="col-11 col-md-8 col-lg-6 col-xl-4 form-background">
+            <div class="row justify-content-center">
+                <div class="col-11">
+                    <h5 class="title text-center">Record new encounter</h5>
+                    <!--Display error message if QR code is invalid-->
+                    @if (ViewBag.validation == "invalid")
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" id="error-message" role="alert">
+                            <strong>Invalid QR code</strong> Please ensure that you are using a valid QR code.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    <br/>
+                    <div class="mb-3">
+                        <label class="col-form-label fs-6 modal-label-set">
+                            Include your partner
+                            <span class="fs-sub-label">(optional)</span>
+                            <p class="mb-0 fs-sub-label">You must include your partner's QR code for the notification feature to work</p>
+                        </label>
+                        <!-- Scan QR code modal trigger button -->
+                        <button type="button" id="start-button" class="btn btn-modal-qr-code d-block" data-bs-toggle="modal" data-bs-target="#QRModal">
+                            <i class="bi bi-qr-code fs-6 fw-bold"></i>
+                            Scan QR Code
+                        </button>
+                        <!-- QR code Modal -->
+                        <div class="modal fade" id="QRModal" tabindex="-1" aria-labelledby="QRModal" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <div class="row justify-content-center">
+                                            <div class="col-12">
+                                                <div id="video-container">
+                                                    <video id="qr-video"></video>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3 justify-content-center">
+                                            <div class="col-6 text-center">
+                                                <button type="button" id="stop-button" class="btn btn-primary btn-disclaimer w-75" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="d-none location-address user-status mb-0" id="add-user-status">User added <i class="bi bi-check-circle-fill user-added"></i></p>
+                    </div>
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group" hidden>
+                            <label asp-for="username1" class="control-label"></label>
+                            <input asp-for="username1" class="form-control" value="@User.Identity.Name" />
+                            <span asp-validation-for="username1" class="text-danger"></span>
+                        </div>
+                        <div class="form-group" id="username2" hidden>
+                            <label asp-for="username2" class="control-label"></label>
+                            <input id="username2Input" asp-for="username2" class="form-control" value="d" />
+                            <span asp-validation-for="username2" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="encounter_date" class="col-form-label modal-label-set">Date</label>
+                            <div class="input-group">
+                                <input asp-for="encounter_date" class="form-control input-text py-2"/>
+                            </div>
+                            <span asp-validation-for="encounter_date" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="comment" class="col-form-label fs-6 modal-label-set">Comment <span class="fs-sub-label">(optional)</span></label>
+                            <input asp-for="comment" class="form-control input-text py-2" data-val="false" />
+                            <span asp-validation-for="comment" class="text-danger"></span>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="notify_status" class="control-label"></label>
+                            <input asp-for="notify_status" class="form-control" value=0 />
+                            <span asp-validation-for="notify_status" class="text-danger"></span>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="notification_msg" class="control-label"></label>
+                            <input asp-for="notification_msg" class="form-control" value="nomsg" />
+                            <span asp-validation-for="notification_msg" class="text-danger"></span>
+                        </div>
+                        <div class="form-group modal-btn d-flex justify-content-center modal-footer-pad">
+                            <input type="submit" value="Create" class="btn btn-modal-submit w-100" />
+                        </div>
+                        <br/>
+                        <a asp-action="Index" class="return-link">Back to Dashboard</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="module">
+        // Import qr scanner javascript file
+        import QrScanner from "/js/qr-scanner.min.js";
+
+        // Get the html elements of the QR scanner
+        const video = document.getElementById('qr-video');
+        const videoContainer = document.getElementById('video-container');
+        const scannedUser = document.getElementById('username2Input');
+
+        // Set result
+        function setResult(result) {
+            // Store the scanned QR code
+            scannedUser.value = result.data;
+
+            // Hide the scan button
+            $('#start-button').addClass('d-none');
+
+            // Show status message
+            $('#add-user-status').removeClass('d-none');
+           
+            // Stop the scanner
+            scanner.stop();
+
+            // Close the modal
+            $('#QRModal').modal('toggle');
+        }
+
+        // Initialise QR scanner
+        const scanner = new QrScanner(video, result => setResult(result), {
+            highlightScanRegion: true,
+            highlightCodeOutline: true,
+        });
+
+        // Start QR scanner is Scan QR code button is clicked
+        document.getElementById('start-button').addEventListener('click', () => {
+            scanner.start();
+        });
+
+        // Stop QR scanner if the close button is clicked
+        document.getElementById('stop-button').addEventListener('click', () => {
+            scanner.stop();
+        });
+    </script>
+  
+ 
+}
+

@@ -1,0 +1,185 @@
+﻿@using System.Text.RegularExpressions
+@model List<HealthyAus.Models.STIContainer>
+@{
+    ViewData["Title"] = "STI Info";
+}
+
+<link rel="stylesheet" href="~/css/STIs.css" asp-append-version="true" />
+
+<div class="top-banner w-100 d-flex justify-content-center">
+    <div class="container-fluid px-sm-5 px-3">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10 col-md-10">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 px-0 text-center">
+                        <img class="banner-img img-fluid" src="~/img/STIs.svg" alt="STI banner image"/>
+                    </div>
+                    <div class="col-lg-6 pb-5">
+                        <h1 class="heading-title">STI Info</h1>
+                        <h5 class="heading-text">Learn about the various symptoms, protective measures and potential effects of STIs</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid main-body py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-xl-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">STI Info</li>
+                </ol>
+            </nav>
+            <p class="sti-select-title mb-1">Select the type of STI</p>
+            <select class="form-select form-select-lg sti-select" aria-label="sti-select" onchange="selectSTI(value)">
+                <option class="sti-options" value="Chlamydia" selected>Chlamydia</option>
+                <option class="sti-options" value="GenitalHerpes">Genital Herpes</option>
+                <option class="sti-options" value="Gonorrhoea">Gonorrhoea</option>
+                <option class="sti-options" value="HepatitisB">Hepatitis B</option>
+                <option class="sti-options" value="HepatitisC">Hepatitis C</option>
+                <option class="sti-options" value="HIV">HIV</option>
+                <option class="sti-options" value="HPV">HPV</option>
+                <option class="sti-options" value="Infectioussyphilis">Infectious syphilis</option>
+                <option class="sti-options" value="Monkeypox">Monkeypox</option>
+            </select>
+            @{
+                bool first = true;
+            }
+            @foreach(var item in Model)
+            {
+                //Remove white spaces and special characters in sti names
+                string stiName = @item.Name;
+                stiName = Regex.Replace(stiName, @"[^0-9a-zA-Z]", "");
+
+                string symptomID = @stiName + "symptom";
+                string collapseSymptomID = "collapse" + @stiName + "symptom";
+                string protectionID = @stiName + "protection";
+                string collapseProtectionID = "collapse" + @stiName + "protection";
+                string effectsID = @stiName + "effects";
+                string collapseEffectsID = "collapse" + @stiName + "effects";
+                
+                // Hide the rest of the STI info except the first in the list
+                string hide = "";
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    hide = "d-none";
+                }
+                <div class="accordion accordion-flush sti @stiName @hide" id="@stiName">
+                    <div class="accordion-item my-3 rounded-3">
+                        <h2 class="accordion-header" id="@symptomID">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#@collapseSymptomID" aria-expanded="true" aria-controls="@collapseSymptomID">
+                                <span><i class="fa-solid fa-magnifying-glass icon"></i></span>
+                                <span>Signs and Symptoms</span>
+                            </button>
+                        </h2>
+                        <div id="@collapseSymptomID" class="accordion-collapse collapse show" aria-labelledby="@symptomID">
+                            <div class="accordion-body">
+                                <ul>
+                                    @foreach(var symptom in item.Symptoms)
+                                    {
+                                        <li class="pb-2">@symptom</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item my-3 rounded-3">
+                        <h2 class="accordion-header" id="@protectionID">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#@collapseProtectionID" aria-expanded="true" aria-controls="@collapseProtectionID">
+                                <span><i class="fa-solid fa-user-shield icon"></i></span>
+                                <span>Protective Measures</span>
+                            </button>
+                        </h2>
+                        <div id="@collapseProtectionID" class="accordion-collapse collapse show" aria-labelledby="@protectionID">
+                            <div class="accordion-body">
+                                <ul>
+                                    @foreach(var measure in item.Protective_measures)
+                                    {
+                                        <li class="pb-2">@measure</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item my-3 rounded-3">
+                        <h2 class="accordion-header" id="@effectsID">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#@collapseEffectsID" aria-expanded="true" aria-controls="@collapseEffectsID">
+                                <span><i class="fa-solid fa-circle-exclamation icon"></i></span>
+                                <span>Potential Effects</span>
+                            </button>
+                        </h2>
+                        <div id="@collapseEffectsID" class="accordion-collapse collapse show" aria-labelledby="@effectsID">
+                            <div class="accordion-body">
+                                <ul>
+                                    @foreach(var effect in item.Effects)
+                                    {
+                                        <li class="pb-2">@effect</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="col-lg-6 col-12">
+                <p class="mb-0 data-source">Data Source: </p>
+                <a class="source-link" target="_blank" rel="noopener noreferrer" href="https://www.who.int/health-topics/sexually-transmitted-infections#tab=tab_1">WHO</a>,
+                <a class="source-link" target="_blank" rel="noopener noreferrer" href="https://www.cdc.gov/std/default.htm">CDC</a>,
+                <a class="source-link" target="_blank" rel="noopener noreferrer" href="https://www.betterhealth.vic.gov.au/a-zconditionsandtreatments">Better Health Channel</a>,
+                <a class="source-link" target="_blank" rel="noopener noreferrer" href="https://www.health.nsw.gov.au/Infectious/factsheets/Pages/default.aspx">NSW Health</a>
+            </div>
+            <div class="d-block d-lg-none col-11 col-sm-6 col-md-7 mt-3">
+                <p class="mb-1 related-links">Related Links</p>
+                <p class="mb-1"><a asp-area="" asp-controller="ContactTracing" asp-action="Index" class="links">Contact Tracing</a></p>
+                <p class="mb-1"><a asp-area="" asp-controller="TestServicesFreeCondoms" asp-action="Index" class="links">Get tested</a></p>
+                <p class="mb-1"><a asp-area="" asp-controller="TestServicesFreeCondoms" asp-action="Index" class="links">Get free condoms</a></p>
+                <p class="mb-1"><a asp-area="" asp-controller="Monkeypox" asp-action="Index" class="links">Get latest statistics of Monkeypox</a></p>
+                <p class="mb-1"><a asp-area="" asp-controller="Stats" asp-action="Index" class="links border-0">Get latest statistics of various STIs</a></p>
+                <p class="mb-1"><a asp-area="" asp-controller="PublicConversation" asp-action="Index" class="links">Know what other people are saying about STIs on Twitter</a></p>
+            </div>
+            <p class="attribution mt-5 mb-0">Icon attributions</p>
+            <p class="mb-0 attribution-text">
+                "<a class="attribution-link" href="https://fontawesome.com/icons/user-shield?f=classic&s=solid">user-shield</a>"
+                by <a class="attribution-link" href="https://fontawesome.com/">Font Awesome</a>
+                is licensed under <a class="attribution-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+            </p>
+            <p class="mb-0 attribution-text">
+                "<a class="attribution-link" href="https://fontawesome.com/icons/magnifying-glass?s=solid&f=classic">magnifying-glass</a>"
+                by <a class="attribution-link" href="https://fontawesome.com/">Font Awesome</a>
+                is licensed under <a class="attribution-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+            </p>
+            <p class="mb-0 attribution-text">
+                "<a class="attribution-link" href="https://fontawesome.com/icons/circle-exclamation?s=solid&f=classic">circle-exclamation</a>"
+                by <a class="attribution-link" href="https://fontawesome.com/">Font Awesome</a>
+                is licensed under <a class="attribution-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+            </p>
+        </div>
+        <div class="d-none d-lg-block col-md-5 col-lg-3 mt-5">
+            <p class="mb-1 related-links">Related Links</p>
+            <p class="mb-1"><a asp-area="" asp-controller="ContactTracing" asp-action="Index" class="links">Contact Tracing</a></p>
+            <p class="mb-1"><a asp-area="" asp-controller="TestServicesFreeCondoms" asp-action="Index" class="links">Get tested</a></p>
+            <p class="mb-1"><a asp-area="" asp-controller="TestServicesFreeCondoms" asp-action="Index" class="links">Get free condoms</a></p>
+            <p class="mb-1"><a asp-area="" asp-controller="Monkeypox" asp-action="Index" class="links">Get latest statistics of Monkeypox</a></p>
+            <p class="mb-1"><a asp-area="" asp-controller="Stats" asp-action="Index" class="links border-0">Get latest statistics of various STIs</a></p>
+            <p class="mb-1"><a asp-area="" asp-controller="PublicConversation" asp-action="Index" class="links">Know what other people are saying about STIs on Twitter</a></p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Select menu bar for Selecting
+        function selectSTI(value) {
+            console.log(value);
+            $(".sti").addClass('d-none');
+            $(`.${value}`).removeClass('d-none');
+        }
+    </script>
+}

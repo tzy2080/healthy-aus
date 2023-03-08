@@ -1,0 +1,365 @@
+﻿html {
+    scroll-behavior: smooth;
+}
+
+.top-banner {
+    background-color: rgba(244, 151, 108, 0.9);
+    min-height: 30vh;
+    padding-top: 100px;
+}
+
+.main-body {
+    background-color: rgba(244, 151, 108, 0.7);
+    min-height: 100vh;
+}
+
+.heading-title {
+    color: #59242E;
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+
+.heading-text {
+    color: #414141;
+    font-weight: 500;
+}
+
+.section-title {
+    color: #59242E;
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+@media screen and (min-width: 421px) {
+    .banner-img {
+        width: 200px;
+        height: 200px;
+        padding-bottom: 15px;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .banner-img {
+        width: 180px;
+        height: 180px;
+        padding-bottom: 15px;
+    }
+}
+
+.location-list {
+    border-radius: 15px;
+}
+
+.location-list-title {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #59242E;
+}
+
+.location-name {
+    color: #59242E;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0px;
+}
+
+.location-address {
+    color: #414141;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-bottom: 0px;
+}
+
+.service-text {
+    color: #414141;
+    font-weight: 500;
+    font-size: 0.85rem;
+    margin-bottom: 0px;
+}
+
+.service-logo {
+    width: 25px;
+    height: 25px;
+    color: #414141;
+}
+
+.direction-button {
+    color: #1A73E8;
+    font-size: 2.1rem;
+}
+
+.direction-text {
+    color: #1A73E8;
+    font-weight: 500;
+    font-size: 0.85rem;
+    margin-bottom: 0px;
+}
+
+.distance-display {
+    font-weight: 600;
+    color: #59242E;
+    font-size: 0.85rem;
+    line-height: 15px;
+}
+
+.location-link {
+    text-decoration: none;
+}
+
+.location-link:focus {
+    outline:0;
+}
+
+#map {
+    width: 100%;
+    height: 70vh;
+    border-radius: 15px;
+}
+
+.mapboxgl-ctrl-geocoder {
+    box-shadow: none !important;
+    width: auto !important;
+    max-width: 100% !important;
+    border-radius: 10px !important;
+}
+
+.mapboxgl-ctrl-geocoder--input {
+    outline: none !important;
+    font-weight: 500 !important;
+}
+
+.mapboxgl-ctrl-geocoder--input:focus {
+    outline: none !important;
+}
+
+.marker {
+    background-image: url('/img/location_icon.svg');
+    background-size: cover;
+    filter: invert(30%) sepia(100%) saturate(1017%) hue-rotate(332deg) brightness(120%) contrast(82%);
+    width: 23px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.mapboxgl-popup {
+    min-width: 290px !important;
+}
+
+.mapboxgl-popup-content {
+    color: #59242E;
+}
+
+.popup-title {
+    color: #59242E;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0;
+}
+
+.mapboxgl-popup-close-button {
+    font-size: 25px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.popup-desc {
+    color: #414141;
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-bottom: 0;
+    padding-top: 5px;
+    line-height: 15px;
+}
+
+#location-list-container{
+    max-height: 70vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-left: 12px !important;
+}
+
+#location-list-container .item.active{
+    background-color: #EBF5FB;
+    border-radius: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    transition: ease-in-out 0.4s;
+}
+
+#location-list-container .item:hover{
+    background-color: #EBF5FB;
+    border-radius: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    transition: ease-in-out 0.4s;
+}
+
+.title {
+    text-decoration: none;
+}
+
+#location-list-container::-webkit-scrollbar{
+    width: 3px;
+    height: 3px;
+    border-left: 0;
+}
+
+#location-list-container::-webkit-scrollbar-track{
+    background: none;
+}
+
+#location-list-container::-webkit-scrollbar-thumb{
+    background: #00853e;
+    border-radius: 15px;
+}
+
+.data-source {
+    color: #59242E;
+    font-weight: 400;
+    font-size: 0.85rem;
+}
+
+.source-link {
+    text-decoration: none;
+    font-weight: 400;
+}
+
+.alert {
+    font-weight: 500;
+    font-size: 1rem;
+    border-radius: 10px;
+}
+
+.alert-icon {
+    font-size: 1.3rem;
+}
+
+.loading-text {
+    font-size: 1.05rem;
+    font-weight: 500;
+}
+
+#loading-section {
+    min-height: 60vh;
+}
+
+#loading-icon {
+    color: #E85A4F;
+    font-size: 2.3rem;
+}
+
+.btn-close {
+    font-size: 0.7rem;
+    padding-top: 25px !important;
+    padding-bottom: 25px !important;
+}
+
+.service-filter {
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    background-color: transparent !important;
+    border-width: 2px;
+    border-color: #704F4F !important;
+    color: #704F4F !important;
+}
+
+.service-filter:hover {
+    background-color: none;
+}
+
+.service-filter.active {
+    background-color: #704F4F !important;
+    transition: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    color: #fff !important;
+}
+
+.service-filter:focus {
+    box-shadow: none !important;
+    outline: none !important;
+    border-color: #704F4F;
+}
+
+.btn-check:focus + .btn-primary, .btn-primary:focus {
+    box-shadow: none !important;
+}
+
+.filter-logo {
+    width: 20px;
+    height: 20px;
+    filter: invert(37%) sepia(3%) saturate(3368%) hue-rotate(318deg) brightness(91%) contrast(97%) !important;
+}
+
+.filter-logo.active {
+    filter: invert(100%) sepia(0%) saturate(2%) hue-rotate(182deg) brightness(103%) contrast(101%) !important;
+}
+
+.check-icon {
+    font-size: 1.05rem;
+}
+
+.state-icon {
+    color: white;
+}
+
+.disable-search {
+    border-radius: 6pt;
+    box-shadow: 0 0 1pt 3pt #E85A4F;
+    transition: ease-in 0.1s;
+}
+
+.error-background {
+    background-color: #f8d7da !important;
+    border-radius: 10px;
+}
+
+.error-text {
+    color: #842029;
+    font-weight: 500;
+}
+
+.mapboxgl-ctrl-geocoder {
+    font-size: 1rem !important;
+}
+
+.location-list-message {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #59242E;
+    line-height: 18px;
+}
+
+.foot-note {
+    color: #59242E;
+}
+
+.attribution {
+    color: #59242E;
+    font-weight: 500;
+}
+
+.attribution-text {
+    color: #414141;
+}
+
+.attribution-link {
+    text-decoration: none;
+}
+
+.filter-tool-tip {
+    font-size: 1.15rem;
+    transform: translate(-25%,-45%);
+    text-decoration: none;
+    color: #59242E;
+}
+
+.tooltip-inner {
+    max-width: 240px;
+    text-align: left;
+}

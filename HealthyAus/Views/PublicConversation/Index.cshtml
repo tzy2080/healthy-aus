@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "Twitter trends";
+}
+
+<link rel="stylesheet" href="~/css/PublicConversation.css" asp-append-version="true" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js" integrity="sha512-dnvR4Aebv5bAtJxDunq3eE8puKAJrY9GBJYl9GC6lTOEC76s1dbDfJFcL9GyzpaDW4vlI/UjR8sKbc1j6Ynx6w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<div class="top-banner w-100 d-flex justify-content-center">
+    <div class="container-fluid px-sm-5 px-3">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10 col-md-10">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 px-0 text-center">
+                        <img class="banner-img img-fluid" src="~/img/public_conversation.svg" alt="public conversation banner image" />
+                    </div>
+                    <div class="col-lg-6 pb-5">
+                        <h1 class="heading-title">Twitter trends</h1>
+                        <h5 class="heading-text">Know what other people are saying about STIs on Twitter</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid main-body py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Twitter trends</li>
+                </ol>
+            </nav>
+            <p class="visualisation-disclaimer">Please be patient, retrieving words from the cloud</p>
+            <iframe class="responsive-iframe" id="wordcloud-frame" src=https://healthyaus.shinyapps.io/Wordcloud/ allowtransparency="true" scrolling="no" frameborder="0"></iframe>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+        <div class="col-12 col-lg-10">
+            <div class="row">
+                <div class="col-11 col-sm-6 col-md-5 col-lg-4 mt-3">
+                    <p class="mb-1 related-links">Related Links</p>
+                    <p class="mb-1"><a asp-area="" asp-controller="ContactTracing" asp-action="Index" class="links">Contact Tracing</a></p>
+                    <p class="mb-1"><a asp-area="" asp-controller="TestServicesFreeCondoms" asp-action="Index" class="links">Get tested</a></p>
+                    <p class="mb-1"><a asp-area="" asp-controller="TestServicesFreeCondoms" asp-action="Index" class="links">Get free condoms</a></p>
+                    <p class="mb-1"><a asp-area="" asp-controller="STI" asp-action="Index" class="links">Get information of various STIs</a></p>
+                    <p class="mb-1"><a asp-area="" asp-controller="Monkeypox" asp-action="Index" class="links">Get latest statistics of Monkeypox</a></p>
+                    <p class="mb-1"><a asp-area="" asp-controller="Stats" asp-action="Index" class="links border-0">Get latest statistics of various STIs</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var options = {
+            autoResize: true
+        }
+        iFrameResize(options, '#wordcloud-frame');
+    </script>
+}

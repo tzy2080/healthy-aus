@@ -1,0 +1,17 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+<link rel="stylesheet" href="~/css/error.css" asp-append-version="true" />
+
+<div class="background">
+    <div class="row justify-content-center mx-0">
+        <div class="col-11 col-md-8 text-center">
+            <img class="error-img img-fluid" src="~/img/error.svg" alt="Page error"/>
+            <p class="error-code mb-0">@Model.ErrorMessage</p>
+            <p class="error-message">Page Not Found</p>
+            <p class="explanation-message">Sorry the page you are looking for does not exists</p>
+            <a class="btn btn-lg btn-primary btn-home" asp-area="" asp-controller="Home" asp-action="Index">Go Home</a>
+        </div>
+    </div>
+</div>

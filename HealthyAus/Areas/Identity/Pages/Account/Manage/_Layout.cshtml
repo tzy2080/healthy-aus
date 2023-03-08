@@ -1,0 +1,33 @@
+﻿@{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout))
+    {
+        Layout = (string)parentLayout;
+    }
+    else
+    {
+        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    }
+}
+
+<link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
+
+<div class="background">
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <h1 class="title">Manage your account</h1>
+            <h2 class="sub-title">Change your account settings</h2>
+            <div class="row mt-3">
+                <div class="col-md-3 mb-md-0 mb-3">
+                    <partial name="_ManageNav" />
+                </div>
+                <div class="col-md-8">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

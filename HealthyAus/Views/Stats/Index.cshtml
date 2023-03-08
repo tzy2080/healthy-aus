@@ -1,0 +1,502 @@
+﻿@model List<HealthyAus.Models.STICaseContainer>
+@{
+    ViewData["Title"] = "Stats";
+}
+
+@functions {
+    // Convert sti stats data into list of json strings
+    List<String> getStiStats()
+    {
+        var result = new List<String>();
+        foreach (var item in Model)
+        {
+            result.Add(Newtonsoft.Json.JsonConvert.SerializeObject(item));
+        }
+        return result;
+    }
+}
+
+<link rel="stylesheet" href="~/css/Stats.css" asp-append-version="true" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js" integrity="sha512-dnvR4Aebv5bAtJxDunq3eE8puKAJrY9GBJYl9GC6lTOEC76s1dbDfJFcL9GyzpaDW4vlI/UjR8sKbc1j6Ynx6w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<div class="top-banner w-100 d-flex justify-content-center">
+    <div class="container-fluid px-sm-5 px-3">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10 col-md-10">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 px-0 text-center">
+                        <img class="banner-img img-fluid" src="~/img/Stats.svg" alt="Stats banner image"/>
+                    </div>
+                    <div class="col-lg-6 py-5">
+                        <h1 class="heading-title">STI Stats</h1>
+                        <h5 class="heading-text">Be informed about the trends and statistics of STIs in Australia & How will HIV affect your immune system without diagnosis and treatement</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid main-body py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-11">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">STI Stats</li>
+                </ol>
+            </nav>
+            <div class="row">
+                <!--Notification rate chart-->
+                <div class="col-lg-8 col-xl-8">
+                    <div class="chartbox-container mb-md-2">
+                        <p class="chart-title">STI notification rate per 100k statistics in Australia</p>
+                        <div class="chart-container">
+                            <canvas id="stiCases"></canvas>
+                        </div>
+                    </div>
+                    <p class="d-none d-lg-block mt-4 mb-0 data-source">Data Source: </p>
+                    <a class="d-none d-lg-block source-link" target="_blank" rel="noopener noreferrer" href="https://data.kirby.unsw.edu.au/">Kirby Institute - UNSW Sydney</a>
+                </div>
+                <!--Notification rate chart graph control options-->
+                <div class="col-sm-8 col-lg-4 col-xl-3 align-content-center">
+                    <label for="gender-select" class="form-label mb-0 mt-lg-5">Sex</label>
+                    <select class="gender-select form-select mb-2" aria-label="gender select" onchange="filterData()">
+                        <option value="Overall" selected>Overall</option>
+                        <option value="Male">Male</option>
+                    </select>
+                    <label for="age-select" aria-label="age select" class="form-label mb-0">Age group</label>
+                    <select class="age-select form-select mb-2" onchange="filterData()">
+                        <option value="Overall" selected>Overall</option>
+                        <option value="15-19">15-19</option>
+                        <option value="20-24">20-24</option>
+                        <option value="25-29">25-29</option>
+                    </select>
+                    <label for="yearRange" class="form-label mb-4">Start year</label>
+                    <div class="range-wrap">
+                        <div class="range-value" id="rangeV"></div>
+                        <input oninput="filterData()" type="range" class="form-range" id="yearRange" min="2011" max="2020" value="2011">
+                    </div>
+                    <p class="d-block d-lg-none mt-4 mb-0 data-source">Data Source: </p>
+                    <a class="d-block d-lg-none source-link" target="_blank" rel="noopener noreferrer" href="https://data.kirby.unsw.edu.au/">Kirby Institute - UNSW Sydney</a>
+                </div>
+            </div>
+            <div class="container-fluid px-0 py-5">
+                <p class="chart-title mb-1">Cases of CD4 cell count at time of HIV diagnosis</p>
+                <p class="chart-desc">
+                    CD4 cells are white blood cells that help fight infections by triggering the body's immune system. Human Immunodeficiency Virus 
+                    (HIV) is a virus that attacks the body's CD4 cells and is typically transmitted between people through bodily fluid contact. 
+                    If left undiagnosed and untreated, the CD4 cell count will gradually drop. 
+                    A low count causes a higher risk of contracting Acquired Immunodeficiency Syndrome (AIDS), particularly at levels below 200 per cubic millimetre of blood. 
+                    A compromised immune system is susceptible to other opportunistic infections.
+                </p>
+                <p class="chart-desc">
+                    The visualisation below shows the CD4 cell count per cubic millimetre of blood of people who were diagnosed with HIV, at the time of their diagnosis. Each dot represents an HIV positive person. 
+                    It is broken down based on the number of years since they were last tested as HIV-negative.
+                </p>
+                <p class="chart-desc">
+                    HIV, if contracted, can be managed and treated nowadays. 
+                    The first step is to get <a class="source-link" asp-controller="TestServicesFreeCondoms" asp-action="Index">tested regularly</a> for STIs if you engage in activities that could put you at risk of contracting HIV.
+                </p>
+                <iframe class="cd4" id="cd4" src=@ViewBag.IframeLink allowtransparency="true" scrolling="no" frameborder="0"></iframe>
+            </div>
+            <div class="col-11 col-sm-6 col-md-5 col-lg-3 mt-3">
+                <p class="mb-1 related-links">Related Links</p>
+                <p class="mb-1"><a asp-area="" asp-controller="ContactTracing" asp-action="Index" class="links">Contact Tracing</a></p>
+                <p class="mb-1"><a asp-area="" asp-controller="TestServicesFreeCondoms" asp-action="Index" class="links">Get tested</a></p>
+                <p class="mb-1"><a asp-area="" asp-controller="TestServicesFreeCondoms" asp-action="Index" class="links">Get free condoms</a></p>
+                <p class="mb-1"><a asp-area="" asp-controller="STI" asp-action="Index" class="links">Get information of various STIs</a></p>
+                <p class="mb-1"><a asp-area="" asp-controller="Monkeypox" asp-action="Index" class="links">Get latest statistics of Monkeypox</a></p>
+                <p class="mb-1"><a asp-area="" asp-controller="PublicConversation" asp-action="Index" class="links">Know what other people are saying about STIs on Twitter</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        iFrameResize({
+            heightCalculationMethod: 'lowestElement'
+        });
+
+        // Range slider tooltip
+        const range = document.getElementById('yearRange');
+        const rangeV = document.getElementById('rangeV');
+        const setValue = () => {
+            const newValue = Number((range.value - range.min) * 100 / (range.max - range.min));
+            const newPosition = 10 - (newValue * 0.2);
+            rangeV.innerHTML = `<span>${range.value}</span>`;
+            rangeV.style.left = `calc(${newValue}% + (${newPosition}px))`;
+        };
+        document.addEventListener("DOMContentLoaded", setValue);
+        range.addEventListener('input', setValue);
+
+        // Convert list of json strings to list of json objects
+        let resultList = @Html.Raw(Json.Serialize(@getStiStats()));
+        let stiCases = [];
+        resultList.forEach(convertJSON);
+
+        function convertJSON(string) {
+            stiCases.push(JSON.parse(string));
+        }
+
+        // Initialise sti dataset
+        let hepatitisCData = stiCases.filter(item => item.sti === "Hepatitis C" && item.sex === "Overall" && item.loc === "AUS" && item.age === "Overall" && item.remote === "Overall");
+        let hepatitisCNewData = stiCases.filter(item => item.sti === "Hepatitis C (newly acquired)" && item.sex === "Overall" && item.loc === "AUS" && item.age === "Overall" && item.remote === "Overall");
+        let hepatitisBData = stiCases.filter(item => item.sti === "Hepatitis B" && item.sex === "Overall" && item.loc === "AUS" && item.age === "Overall" && item.remote === "Overall");
+        let hepatitisBNewData = stiCases.filter(item => item.sti === "Hepatitis B (newly acquired)" && item.sex === "Overall" && item.loc === "AUS" && item.age === "Overall" && item.remote === "Overall");
+        let chlamydiaData = stiCases.filter(item => item.sti === "Chlamydia" && item.sex === "Overall" && item.loc === "AUS" && item.age === "Overall" && item.remote === "Overall");
+        let gonorrhoeaData = stiCases.filter(item => item.sti === "Gonorrhoea" && item.sex === "Overall" && item.loc === "AUS" && item.age === "Overall" && item.remote === "Overall");
+        let syphilisData = stiCases.filter(item => item.sti === "Infectious syphilis" && item.sex === "Overall" && item.loc === "AUS" && item.age === "Overall" && item.remote === "Overall");
+        let hivData = stiCases.filter(item => item.sti === "HIV" && item.sex === "Overall" && item.loc === "AUS" && item.age === "Overall" && item.remote === "Overall");
+        
+        const labels = ['2011','2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020'];
+        // Initialise Chart dataset
+        const datasets = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Chlamydia',
+                    borderColor: '#588157',
+                    backgroundColor: '#588157',
+                    data: chlamydiaData,
+                    parsing: {
+                        xAxisKey: 'year',
+                        yAxisKey: 'rate'
+                    }
+                },
+                {
+                    label: 'Gonorrhoea',
+                    borderColor: '#023047',
+                    backgroundColor: '#023047',
+                    data: gonorrhoeaData,
+                    parsing: {
+                        xAxisKey: 'year',
+                        yAxisKey: 'rate'
+                    }
+                },
+                {
+                    label: 'Hepatitis B',
+                    borderColor: '#FFB703',
+                    backgroundColor: '#FFB703',
+                    data: hepatitisBData,
+                    parsing: {
+                        xAxisKey: 'year',
+                        yAxisKey: 'rate'
+                    }
+                },
+                {
+                    label: 'Hepatitis B (newly acquired)',
+                    borderColor: '#FB8500',
+                    backgroundColor: '#FB8500',
+                    data: hepatitisBNewData,
+                    parsing: {
+                        xAxisKey: 'year',
+                        yAxisKey: 'rate'
+                    }
+                },
+                {
+                    label: 'Hepatitis C',
+                    borderColor: '#E76F51',
+                    backgroundColor: '#E76F51',
+                    data: hepatitisCData,
+                    parsing: {
+                        xAxisKey: 'year',
+                        yAxisKey: 'rate'
+                    }
+                },
+                {
+                    label: 'Hepatitis C (newly acquired)',
+                    borderColor: 'brown',
+                    backgroundColor: 'brown',
+                    data: hepatitisCNewData,
+                    parsing: {
+                        xAxisKey: 'year',
+                        yAxisKey: 'rate'
+                    }
+                },
+                {
+                    label: 'HIV',
+                    borderColor: '#219ebc',
+                    backgroundColor: '#219ebc',
+                    data: hivData,
+                    parsing: {
+                        xAxisKey: 'year',
+                        yAxisKey: 'rate'
+                    }
+                },
+                {
+                    label: 'Infectious syphilis',
+                    borderColor: '#264653',
+                    backgroundColor: '#264653 ',
+                    data: syphilisData,
+                    parsing: {
+                        xAxisKey: 'year',
+                        yAxisKey: 'rate'
+                    }
+                },
+            ]
+        };
+
+        // Chart configuration
+        const config = {
+            type: 'line',
+            data: datasets,
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Rate',
+                            font: {
+                                size: 15,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size:14
+                            }
+                        }
+                    },
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: "Year",
+                            font: {
+                                size: 15,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size:14
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Initialise chart
+        const stiChart = new Chart(
+            document.getElementById('stiCases'),
+            config
+        );
+
+        // Change graph based on the user selection
+        function filterData() {
+            // Get user selections
+            let gender = $(".gender-select").val();
+            let age = $(".age-select").val();
+            let year = parseInt($("#yearRange").val());
+
+            // Update year label
+            let yearRange = year - 2011;
+            const rangeValue = labels.slice(yearRange, 10);
+
+            // Filter data
+            hepatitisCData = stiCases.filter(item => item.sti === "Hepatitis C" && item.sex === gender && item.remote === "Overall" && item.age === age && item.year >= year && item.year <= 2020 && item.loc === "AUS");
+            hepatitisCNewData = stiCases.filter(item => item.sti === "Hepatitis C (newly acquired)" && item.sex === gender && item.remote === "Overall" && item.age === age && item.year >= year && item.year <= 2020 && item.loc === "AUS");
+            hepatitisBData = stiCases.filter(item => item.sti === "Hepatitis B" && item.sex === gender && item.remote === "Overall" && item.age === age && item.year >= year && item.year <= 2020 && item.loc === "AUS");
+            hepatitisBNewData = stiCases.filter(item => item.sti === "Hepatitis B (newly acquired)" && item.sex === gender && item.remote === "Overall" && item.age === age && item.year >= year && item.year <= 2020 && item.loc === "AUS");
+            chlamydiaData = stiCases.filter(item => item.sti === "Chlamydia" && item.sex === gender && item.remote === "Overall" && item.age === age && item.year >= year && item.year <= 2020 && item.loc === "AUS");
+            gonorrhoeaData = stiCases.filter(item => item.sti === "Gonorrhoea" && item.sex === gender && item.remote === "Overall" && item.age === age && item.year >= year && item.year <= 2020 && item.loc === "AUS");
+            syphilisData = stiCases.filter(item => item.sti === "Infectious syphilis" && item.sex === gender && item.remote === "Overall" && item.age === age && item.year >= year && item.year <= 2020 && item.loc === "AUS");
+            hivData = stiCases.filter(item => item.sti === "HIV" && item.sex === gender && item.remote === "Overall" && item.age === age && item.year >= year && item.year <= 2020 && item.loc === "AUS");
+            
+            // Update chart data
+            stiChart.data =
+            {
+                labels: rangeValue,
+                datasets: [
+                    {
+                        label: 'Chlamydia',
+                        borderColor: '#588157',
+                        backgroundColor: '#588157',
+                        data: chlamydiaData,
+                        parsing: {
+                            xAxisKey: 'year',
+                            yAxisKey: 'rate'
+                        }
+                    },
+                    {
+                        label: 'Gonorrhoea',
+                        borderColor: '#023047',
+                        backgroundColor: '#023047',
+                        data: gonorrhoeaData,
+                        parsing: {
+                            xAxisKey: 'year',
+                            yAxisKey: 'rate'
+                        }
+                    },
+                    {
+                        label: 'Hepatitis B',
+                        borderColor: '#FFB703',
+                        backgroundColor: '#FFB703',
+                        data: hepatitisBData,
+                        parsing: {
+                            xAxisKey: 'year',
+                            yAxisKey: 'rate'
+                        }
+                    },
+                    {
+                        label: 'Hepatitis B (newly acquired)',
+                        borderColor: '#FB8500',
+                        backgroundColor: '#FB8500',
+                        data: hepatitisBNewData,
+                        parsing: {
+                            xAxisKey: 'year',
+                            yAxisKey: 'rate'
+                        }
+                    },
+                    {
+                        label: 'Hepatitis C',
+                        borderColor: '#E76F51',
+                        backgroundColor: '#E76F51',
+                        data: hepatitisCData,
+                        parsing: {
+                            xAxisKey: 'year',
+                            yAxisKey: 'rate'
+                        }
+                    },
+                    {
+                        label: 'Hepatitis C (newly acquired)',
+                        borderColor: 'brown',
+                        backgroundColor: 'brown',
+                        data: hepatitisCNewData,
+                        parsing: {
+                            xAxisKey: 'year',
+                            yAxisKey: 'rate'
+                        }
+                    },
+                    {
+                        label: 'HIV',
+                        borderColor: '#219ebc',
+                        backgroundColor: '#219ebc',
+                        data: hivData,
+                        parsing: {
+                            xAxisKey: 'year',
+                            yAxisKey: 'rate'
+                        }
+                    },
+                    {
+                        label: 'Infectious syphilis',
+                        borderColor: '#264653',
+                        backgroundColor: '#264653 ',
+                        data: syphilisData,
+                        parsing: {
+                            xAxisKey: 'year',
+                            yAxisKey: 'rate'
+                        }
+                    },
+                ]
+            };
+
+            // Hide sti line chart that are hidden previously
+            stiChart.legend.legendItems.forEach((dataset, index) => {
+                const datasetIndex = dataset.datasetIndex;
+                const isHidden = dataset.hidden;
+                stiChart.setDatasetVisibility(datasetIndex, !isHidden);
+            });
+
+            stiChart.update();
+        }
+
+        // Custom chart legend plugin
+        function generateLegend() {
+            // get selected location to insert
+            const chartBox = document.querySelector('.chartbox-container');
+
+            //create div
+            const div = document.createElement('DIV');
+            div.classList.add('row');
+            div.setAttribute('id', 'customLegend');
+
+            //create col
+            const col1 = document.createElement('DIV');
+            col1.classList.add('col-6');
+            col1.classList.add('col-md-5');
+            col1.classList.add('col-lg-3');
+            col1.classList.add('pe-0');
+            div.appendChild(col1);
+
+            const col2 = document.createElement('DIV');
+            col2.classList.add('col-6');
+            col2.classList.add('col-md-5');
+            col2.classList.add('col-lg-3');
+            col2.classList.add('pe-0');
+            div.appendChild(col2);
+
+            // create UL
+            const ul1 = document.createElement('UL');
+            ul1.classList.add("legend");
+            const ul2 = document.createElement('UL');
+            ul2.classList.add("legend");
+            let counter = 0;
+
+            stiChart.legend.legendItems.forEach((dataset, index) => {
+                const text = dataset.text;
+                const datasetIndex = dataset.datasetIndex;
+                const bgColor = dataset.fillStyle;
+                const bColor = dataset.strokeStyle;
+                const fontColor = dataset.fontColor;
+
+                //create li
+                const li = document.createElement('LI');
+
+                // span colorbox
+                const spanBox = document.createElement('SPAN');
+                spanBox.id = "color-box";
+                spanBox.style.borderColor = bColor;
+                spanBox.style.backgroundColor = bgColor;
+
+                // p + text
+                const p = document.createElement('SPAN');
+                p.id = "text";
+                const textNode = document.createTextNode(text);
+
+                // checkbox
+                const checkbox = document.createElement('input');
+                checkbox.classList.add("form-check-input");
+                checkbox.classList.add("me-1");
+                checkbox.setAttribute("type", "checkbox");
+                checkbox.setAttribute("value", "");
+                checkbox.setAttribute("id", `dataset${index}`);
+                checkbox.setAttribute("checked", "true");
+
+                checkbox.onclick = (click) => {
+                    const isHidden = !stiChart.isDatasetVisible(datasetIndex);
+                    stiChart.setDatasetVisibility(datasetIndex, isHidden);
+                    stiChart.update();
+                }
+
+                li.appendChild(checkbox);
+                li.appendChild(spanBox);
+                li.appendChild(p);
+                p.appendChild(textNode);
+                if (counter < 4) {
+                    col1.appendChild(ul1);
+                    ul1.appendChild(li);
+                }
+                else {
+                    col2.appendChild(ul2)
+                    ul2.appendChild(li);
+                }
+                counter += 1;
+            });
+
+            // insert div into chart container
+            chartBox.appendChild(div);
+        }
+
+        generateLegend();
+    </script>
+}

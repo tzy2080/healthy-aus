@@ -1,0 +1,59 @@
+﻿@model HealthyAus.Models.CONTACTTRACING
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/Edit.css" />
+
+<div class="main-body">
+    <div class="row justify-content-center mx-0">
+        <div class="col-11 col-md-8 col-lg-6 col-xl-4 form-background">
+            <div class="row justify-content-center">
+                <div class="col-11">
+                    <h5 class="title text-center">Edit encounter record</h5>
+                    <br/>
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="id" />
+                        <div class="form-group" hidden>
+                            <label asp-for="username1" class="control-label"></label>
+                            <input asp-for="username1" class="form-control" />
+                            <span asp-validation-for="username1" class="text-danger"></span>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="username2" class="control-label"></label>
+                            <input asp-for="username2" class="form-control" />
+                            <span asp-validation-for="username2" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="encounter_date" class="col-form-label fs-6 modal-label-set">Date</label>
+                            <div>@Html.DisplayFor(model => model.encounter_date)</div>
+                            <span asp-validation-for="encounter_date" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="comment" class="col-form-label fs-6 modal-label-set">Comment</label>
+                            <input asp-for="comment" class="form-control input-text py-2" />
+                            <span asp-validation-for="comment" class="text-danger"></span>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="notify_status" class="control-label"></label>
+                            <input asp-for="notify_status" class="form-control" />
+                            <span asp-validation-for="notify_status" class="text-danger"></span>
+                        </div>
+                        <div class="form-group modal-btn d-flex justify-content-center modal-footer-pad">
+                            <input type="submit" value="Save" class="btn btn-modal-submit w-100" />
+                        </div>
+                        <br />
+                        <a asp-action="Index" class="return-link">Back to Dashboard</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

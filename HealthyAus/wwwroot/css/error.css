@@ -1,0 +1,40 @@
+﻿.background {
+    background-color: rgba(244, 151, 108, 0.9);
+    min-height: 100vh;
+    padding-top: 170px;
+}
+
+.error-img {
+    width: 190px;
+    height: 190px;
+}
+
+.error-code {
+    font-size: 2.7rem;
+    font-weight: 800;
+    color: #59242E;
+}
+
+.error-message {
+    font-size: 2.2rem;
+    font-weight: 500;
+    color: #414141;
+}
+
+.explanation-message {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #414141;
+}
+
+.btn-home {
+    border-radius: 20px;
+    font-weight: 500;
+    background-color: #E85A4F;
+    border-color: #E85A4F;
+}
+
+.btn-home:hover {
+    background-color: #E85A4F;
+    border-color: #E85A4F;
+}

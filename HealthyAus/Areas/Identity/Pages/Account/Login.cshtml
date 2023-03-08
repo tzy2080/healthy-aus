@@ -1,0 +1,86 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<link rel="stylesheet" href="~/css/ContactTracing.css" asp-append-version="true" />
+
+<div class="top-banner w-100 d-flex justify-content-center">
+    <div class="container-fluid px-sm-5 px-3">
+        <div class="row justify-content-center">
+            <div class="col-xl-9 col-lg-10 col-md-10">
+                <div class="row align-items-center">
+                    <div class="col-lg-5 px-0 text-center">
+                        <img class="banner-img img-fluid" src="~/img/contacttracing.svg" alt="Contact tracing banner image" />
+                    </div>
+                    <div class="col-lg-7 pb-5">
+                        <h1 class="heading-title">Contact tracing</h1>
+                        <h5 class="heading-text">Keep track of your sexual encounters</h5>
+                        <h5 class="heading-text">Easily notify your past sexual partners if you are diagnosed with an STI</h5>
+                        <h5 class="heading-text">Get notified if your past sexual partner is diagnosed with STI</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid main-body py-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-4 col-lg-6 col-md-7 col-sm-8 col-11 form-background">
+            <div class="row justify-content-center">
+                <div class="col-11">
+                    <form id="account" method="post">
+                        <p class="form-title text-center mb-0">Login</p>
+                        <p class="form-desc text-center mb-3">Please enter your username and password</p>
+                        <br />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="mb-3">
+                            <label asp-for="Input.Email" class="form-label labels">Username</label>
+                            <div class="input-group">
+                                <div class="input-group-text bg-transparent border-right-0 pe-0"><i class="fa-solid fa-user form-icon"></i></div>
+                                <input asp-for="Input.Email" class="form-control input-text border-start-0 py-2" autocomplete="username" aria-required="true" placeholder="Enter username">
+                            </div>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="Input.Password" class="form-label labels">Password</label>
+                            <div class="input-group">
+                                <div class="input-group-text bg-transparent border-right-0 pe-0"><i class="fa-solid fa-lock form-icon"></i></div>
+                                <input asp-for="Input.Password" class="form-control input-text border-start-0 py-2" autocomplete="current-password" aria-required="true" placeholder="Enter password">
+                            </div>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                        <div class="mb-4 form-check">
+                            <label asp-for="Input.RememberMe" class="form-check-label remember-me">Remember me?</label>
+                            <input type="checkbox" class="form-check-input" asp-for="Input.RememberMe">
+                        </div>
+                        <button id="login-submit" type="submit" class="btn w-100 login-btn mb-4">Login</button>
+                        <p class="register-text">Don't have an account? <a class="register-link" asp-area="Identity" asp-page="/Account/Register">Register now</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-11">
+            <p class="attribution mt-5 mb-0">Icon attributions</p>
+            <p class="mb-0 attribution-text">
+                "<a class="attribution-link" href="https://fontawesome.com/icons/user?s=solid&f=classic">user</a>"
+                by <a class="attribution-link" href="https://fontawesome.com/">Font Awesome</a>
+                is licensed under <a class="attribution-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+            </p>
+            <p class="mb-0 attribution-text">
+                "<a class="attribution-link" href="https://fontawesome.com/icons/lock?f=classic&s=solid">lock</a>"
+                by <a class="attribution-link" href="https://fontawesome.com/">Font Awesome</a>
+                is licensed under <a class="attribution-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
